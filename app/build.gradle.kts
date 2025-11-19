@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -49,6 +50,25 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    // Import the Firebase BoM
+    implementation(platform(libs.firebase.bom))
+
+    // Add Firebase Analytics
+    implementation(libs.firebase.analytics)
+
+    // Firebase Authentication - use the version from BoM
+    implementation("com.google.firebase:firebase-auth")
+
+    // Google Play Services Auth for Google Sign-In
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+    // Navigation Compose
+    implementation("androidx.navigation:navigation-compose:2.7.5")
+
+    // Compose Icons Extended
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
