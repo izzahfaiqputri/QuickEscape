@@ -57,8 +57,8 @@ dependencies {
     // Add Firebase Analytics
     implementation(libs.firebase.analytics)
 
-    // Firebase Authentication - use the version from BoM
-    implementation("com.google.firebase:firebase-auth")
+    // Firebase Authentication with KTX
+    implementation(libs.firebase.auth.ktx)
 
     // Google Play Services Auth for Google Sign-In
     implementation("com.google.android.gms:play-services-auth:20.7.0")

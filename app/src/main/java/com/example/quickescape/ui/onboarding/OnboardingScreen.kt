@@ -3,10 +3,12 @@ package com.example.quickescape.ui.onboarding
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -89,65 +91,68 @@ fun OnboardingScreen(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
         ) { page ->
-            OnboardingPageContent(page = pages[page])
+            OnboardingPageContent(
+                page = pages[page],
+                isLastPage = page == pages.size - 1
+            )
         }
 
         // navigation arrows and dots
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 40.dp)
-                .padding(horizontal = 24.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // left arrow (previous)
-            if (pagerState.currentPage > 0) {
-                IconButton(
-                    onClick = {
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                        }
-                    },
-                    modifier = Modifier
-                        .size(56.dp)
-                        .background(Color.White.copy(alpha = 0.3f), CircleShape)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = "Previous",
-                        tint = Color.White,
-                        modifier = Modifier.size(36.dp)
-                    )
-                }
-            } else {
-                Spacer(modifier = Modifier.size(56.dp))
-            }
-
-            // Indicator dots
+        if (pagerState.currentPage < pages.size - 1) {
             Row(
-                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 40.dp)
+                    .padding(horizontal = 24.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                repeat(pages.size) { iteration ->
-                    val color = if (pagerState.currentPage == iteration) {
-                        Color.White
-                    } else {
-                        Color.White.copy(alpha = 0.5f)
-                    }
-                    Box(
+                // left arrow (previous)
+                if (pagerState.currentPage > 0) {
+                    IconButton(
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                            }
+                        },
                         modifier = Modifier
-                            .padding(4.dp)
-                            .clip(CircleShape)
-                            .background(color)
-                            .size(10.dp)
-                    )
+                            .size(56.dp)
+                            .background(Color.White.copy(alpha = 0.3f), CircleShape)
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "Previous",
+                            tint = Color.White,
+                            modifier = Modifier.size(36.dp)
+                        )
+                    }
+                } else {
+                    Spacer(modifier = Modifier.size(56.dp))
                 }
-            }
 
-            // Right arrow (next)
-            if (pagerState.currentPage < pages.size - 1) {
+                // Indicator dots
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    repeat(pages.size) { iteration ->
+                        val color = if (pagerState.currentPage == iteration) {
+                            Color.White
+                        } else {
+                            Color.White.copy(alpha = 0.5f)
+                        }
+                        Box(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .clip(CircleShape)
+                                .background(color)
+                                .size(10.dp)
+                        )
+                    }
+                }
+
+                // Right arrow (next)
                 IconButton(
                     onClick = {
                         coroutineScope.launch {
@@ -165,19 +170,31 @@ fun OnboardingScreen(
                         modifier = Modifier.size(36.dp)
                     )
                 }
-            } else {
-                // Finish button on last page
-                IconButton(
-                    onClick = { onFinish() },
+            }
+        } else {
+            // Start button on last page
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 60.dp)
+                    .padding(horizontal = 40.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
                     modifier = Modifier
-                        .size(56.dp)
-                        .background(Color.White, CircleShape)
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .clip(RoundedCornerShape(28.dp))
+                        .background(Color.Black)
+                        .clickable { onFinish() },
+                    contentAlignment = Alignment.Center
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Check,
-                        contentDescription = "Finish",
-                        tint = Color.Black,
-                        modifier = Modifier.size(36.dp)
+                    Text(
+                        text = "Mulai",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
                 }
             }
@@ -186,7 +203,7 @@ fun OnboardingScreen(
 }
 
 @Composable
-fun OnboardingPageContent(page: OnboardingPage) {
+fun OnboardingPageContent(page: OnboardingPage, isLastPage: Boolean) {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -275,7 +292,8 @@ fun OnboardingLogoPagePreview() {
             title = "",
             description = "",
             isLogoOnly = true
-        )
+        ),
+        isLastPage = false
     )
 }
 
@@ -287,6 +305,20 @@ fun OnboardingPagePreview() {
             imageRes = R.drawable.london,
             title = "Let's Make Your Dream Vacation",
             description = "London"
-        )
+        ),
+        isLastPage = false
+    )
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+@Composable
+fun OnboardingLastPagePreview() {
+    OnboardingPageContent(
+        page = OnboardingPage(
+            imageRes = R.drawable.tokyo,
+            title = "Book With Our Tourism Company",
+            description = "Tokyo"
+        ),
+        isLastPage = true
     )
 }

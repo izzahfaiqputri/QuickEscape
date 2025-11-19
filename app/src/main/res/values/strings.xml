@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">QuickEscape</string>
+    <!-- TODO: Replace this with your actual Web Client ID from Firebase Console -->
+    <!-- Go to Firebase Console > Project Settings > General > Your apps > Web API Key -->
+    <string name="default_web_client_id">455403333960-kh2pgbbj5ls5kbjavce8jan7sh9b8hlr.apps.googleusercontent.com</string>
 </resources>
