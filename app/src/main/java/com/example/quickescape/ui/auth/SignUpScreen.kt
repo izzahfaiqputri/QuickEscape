@@ -74,20 +74,33 @@ fun SignUpScreen(
                             ).show()
                         }
                     }
+            } ?: run {
+                Toast.makeText(context, "Failed to get ID token from Google account", Toast.LENGTH_SHORT).show()
             }
         } catch (e: ApiException) {
-            Toast.makeText(context, "Google sign up failed: ${e.message}", Toast.LENGTH_SHORT).show()
+            val errorMsg = when (e.statusCode) {
+                10 -> "Google Play Services is not configured correctly. Check SHA-1 fingerprint in Firebase Console and ensure google-services.json is up to date."
+                12500 -> "The application is not recognized by Google Play Services."
+                else -> "Google sign up failed: ${e.message} (Error code: ${e.statusCode})"
+            }
+            Toast.makeText(context, errorMsg, Toast.LENGTH_LONG).show()
+            android.util.Log.e("GoogleSignUp", "Error: ${e.message}, Status Code: ${e.statusCode}", e)
         }
     }
 
     fun signUpWithGoogle() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(context.getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
+        try {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(context.getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
 
-        val googleSignInClient = GoogleSignIn.getClient(context, gso)
-        googleSignInLauncher.launch(googleSignInClient.signInIntent)
+            val googleSignInClient = GoogleSignIn.getClient(context, gso)
+            googleSignInLauncher.launch(googleSignInClient.signInIntent)
+        } catch (e: Exception) {
+            Toast.makeText(context, "Failed to start Google Sign-Up: ${e.message}", Toast.LENGTH_LONG).show()
+            android.util.Log.e("GoogleSignUp", "Error starting sign up", e)
+        }
     }
 
     fun signUpWithEmail() {
