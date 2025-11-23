@@ -29,12 +29,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.quickescape.R
+import com.example.quickescape.data.helper.FirebaseInitializer
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(
@@ -49,6 +52,8 @@ fun SignInScreen(
 
     val context = LocalContext.current
     val auth = Firebase.auth
+    val firestore = FirebaseFirestore.getInstance()
+    val coroutineScope = rememberCoroutineScope()
 
     // Google Sign-In launcher
     val googleSignInLauncher = rememberLauncherForActivityResult(
@@ -62,8 +67,12 @@ fun SignInScreen(
                 auth.signInWithCredential(credential)
                     .addOnCompleteListener { authTask ->
                         if (authTask.isSuccessful) {
-                            Toast.makeText(context, "Sign in successful!", Toast.LENGTH_SHORT).show()
-                            onSignInSuccess()
+                            // ✅ TAMBAHAN: Initialize user profile untuk Google Sign-In
+                            coroutineScope.launch {
+                                FirebaseInitializer.initializeUserProfile(firestore, auth)
+                                Toast.makeText(context, "Sign in successful!", Toast.LENGTH_SHORT).show()
+                                onSignInSuccess()
+                            }
                         } else {
                             Toast.makeText(
                                 context,
@@ -122,8 +131,12 @@ fun SignInScreen(
             .addOnCompleteListener { task ->
                 isLoading = false
                 if (task.isSuccessful) {
-                    Toast.makeText(context, "Sign in successful!", Toast.LENGTH_SHORT).show()
-                    onSignInSuccess()
+                    // ✅ TAMBAHAN: Initialize user profile untuk Email Sign-In
+                    coroutineScope.launch {
+                        FirebaseInitializer.initializeUserProfile(firestore, auth)
+                        Toast.makeText(context, "Sign in successful!", Toast.LENGTH_SHORT).show()
+                        onSignInSuccess()
+                    }
                 } else {
                     val errorMessage = when {
                         task.exception?.message?.contains("There is no user record") == true ->
