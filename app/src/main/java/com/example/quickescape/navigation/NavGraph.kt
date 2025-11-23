@@ -19,6 +19,8 @@ import com.example.quickescape.ui.home.DetailLocationScreen
 import com.example.quickescape.ui.home.ExploreScreen
 import com.example.quickescape.ui.home.HomeScreen
 import com.example.quickescape.ui.home.SearchScreen
+import com.example.quickescape.ui.profile.ProfileScreen
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
@@ -146,22 +148,38 @@ fun NavGraph(
             val locationId = backStackEntry.arguments?.getString("locationId") ?: ""
             val firestore = FirebaseFirestore.getInstance()
             val storage = FirebaseStorage.getInstance()
-            val repository = LocationRepository(firestore, storage)
-            val viewModel: LocationViewModel = viewModel(
+            val auth = FirebaseAuth.getInstance()
+            val locationRepository = LocationRepository(firestore, storage)
+            val userRepository = com.example.quickescape.data.repository.UserRepository(firestore, storage, auth)
+
+            val locationViewModel: LocationViewModel = viewModel(
                 factory = object : androidx.lifecycle.ViewModelProvider.Factory {
                     override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                        return LocationViewModel(repository) as T
+                        return LocationViewModel(locationRepository) as T
                     }
                 }
             )
 
-            val selectedLocation by viewModel.selectedLocation.collectAsState()
-            val reviews by viewModel.reviews.collectAsState()
-            val isLoading by viewModel.isLoading.collectAsState()
+            val userViewModel: com.example.quickescape.data.viewmodel.UserViewModel = viewModel(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        return com.example.quickescape.data.viewmodel.UserViewModel(userRepository) as T
+                    }
+                }
+            )
+
+            val selectedLocation by locationViewModel.selectedLocation.collectAsState()
+            val reviews by locationViewModel.reviews.collectAsState()
+            val isLoading by locationViewModel.isLoading.collectAsState()
+            val userProfile by userViewModel.userProfile.collectAsState()
 
             LaunchedEffect(locationId) {
-                viewModel.loadLocationById(locationId)
+                locationViewModel.loadLocationById(locationId)
+                userViewModel.loadUserProfile()
             }
+
+            // Derive isSaved directly from userProfile to always be in sync
+            val isSaved = userProfile?.savedLocations?.contains(locationId) ?: false
 
             if (selectedLocation != null) {
                 DetailLocationScreen(
@@ -174,12 +192,17 @@ fun NavGraph(
                     onAddReviewClick = {
                         navController.navigate(Screen.AddReview.createRoute(locationId))
                     },
-                    onSaveClick = {
-                        // TODO: Save to user's saved locations
+                    onSaveClick = { locId ->
+                        if (isSaved) {
+                            userViewModel.removeSavedLocation(locId)
+                        } else {
+                            userViewModel.addSavedLocation(locId)
+                        }
                     },
                     onDeleteReview = { reviewId ->
-                        viewModel.deleteReview(locationId, reviewId)
-                    }
+                        locationViewModel.deleteReview(locationId, reviewId)
+                    },
+                    isSaved = isSaved
                 )
             }
         }
@@ -302,6 +325,65 @@ fun NavGraph(
                         userLocation = "${String.format("%.4f", userLat)}, ${String.format("%.4f", userLon)}"
                         viewModel.loadNearbyLocations(userLat, userLon, 50f)
                     }
+                }
+            )
+        }
+
+        composable(Screen.Profile.route) {
+            val firestore = FirebaseFirestore.getInstance()
+            val storage = FirebaseStorage.getInstance()
+            val auth = FirebaseAuth.getInstance()
+            val currentUser = auth.currentUser
+            val locationRepository = LocationRepository(firestore, storage)
+            val userRepository = com.example.quickescape.data.repository.UserRepository(firestore, storage, auth)
+
+            val locationViewModel: LocationViewModel = viewModel(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        return LocationViewModel(locationRepository) as T
+                    }
+                }
+            )
+
+            val userViewModel: com.example.quickescape.data.viewmodel.UserViewModel = viewModel(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        return com.example.quickescape.data.viewmodel.UserViewModel(userRepository) as T
+                    }
+                }
+            )
+
+            val userProfile by userViewModel.userProfile.collectAsState()
+            val savedLocations by userViewModel.savedLocations.collectAsState()
+            val isLoading by userViewModel.isLoading.collectAsState()
+            val allLocations by locationViewModel.locations.collectAsState()
+
+            LaunchedEffect(Unit) {
+                userViewModel.loadUserProfile()
+                locationViewModel.loadLocations()
+            }
+
+            LaunchedEffect(allLocations) {
+                if (allLocations.isNotEmpty()) {
+                    userViewModel.loadSavedLocations(allLocations)
+                }
+            }
+
+            ProfileScreen(
+                userProfile = userProfile,
+                savedLocations = savedLocations,
+                isLoading = isLoading,
+                onUpdateProfileImage = { imageUri ->
+                    userViewModel.updateProfileImage(imageUri)
+                },
+                onLocationClick = { location ->
+                    navController.navigate(Screen.DetailLocation.createRoute(location.id))
+                },
+                onRemoveSavedLocation = { locationId ->
+                    userViewModel.removeSavedLocation(locationId)
+                },
+                onSaveProfileChanges = { newName ->
+                    userViewModel.updateProfileInfo(newName, currentUser?.email ?: "")
                 }
             )
         }

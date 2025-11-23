@@ -100,8 +100,8 @@ fun BottomNavigationBar(
                 )
             },
             label = { Text("Profile", fontSize = 11.sp, fontWeight = FontWeight.Medium) },
-            selected = false,
-            onClick = { /* TODO: Navigate to Profile */ },
+            selected = currentRoute == Screen.Profile.route,
+            onClick = { onNavigate(Screen.Profile.route) },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color(0xFFE8725E),
                 selectedTextColor = Color(0xFFE8725E),
