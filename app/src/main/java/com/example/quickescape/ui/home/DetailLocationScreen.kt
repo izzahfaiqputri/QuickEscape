@@ -1,0 +1,423 @@
+package com.example.quickescape.ui.home
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.example.quickescape.data.model.Location
+import com.example.quickescape.data.model.Review
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+@Composable
+fun DetailLocationScreen(
+    location: Location,
+    reviews: List<Review>,
+    isLoading: Boolean,
+    onBackClick: () -> Unit,
+    onAddReviewClick: () -> Unit,
+    onSaveClick: () -> Unit,
+    onDeleteReview: (String) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        item {
+            Box(modifier = Modifier.fillMaxWidth()) {
+                AsyncImage(
+                    model = location.image,
+                    contentDescription = location.name,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp),
+                    contentScale = ContentScale.Crop
+                )
+
+                Surface(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(12.dp)
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(50))
+                        .clickable { onBackClick() },
+                    color = Color.White,
+                    shadowElevation = 4.dp
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .clickable { onBackClick() },
+                        tint = Color.Black
+                    )
+                }
+
+                Surface(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(12.dp)
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(50))
+                        .clickable { onSaveClick() },
+                    color = Color.White,
+                    shadowElevation = 4.dp
+                ) {
+                    Icon(
+                        Icons.Default.BookmarkBorder,
+                        contentDescription = "Save",
+                        modifier = Modifier.padding(8.dp),
+                        tint = Color(0xFFE8725E)
+                    )
+                }
+            }
+        }
+
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(
+                    location.name,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.LocationOn,
+                        contentDescription = "Location",
+                        modifier = Modifier.size(18.dp),
+                        tint = Color(0xFFE8725E)
+                    )
+                    Text(
+                        "${location.city}, ${location.island}",
+                        fontSize = 14.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        RatingStars(rating = location.rating, size = 20.dp)
+                        Text(
+                            String.format("%.1f", location.rating),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                        Text(
+                            "(${location.ratingCount} reviews)",
+                            fontSize = 12.sp,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
+
+                    Text(
+                        "Rp ${String.format("%,d", location.price_start)}",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFE8725E)
+                    )
+                }
+
+                Surface(
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .clip(RoundedCornerShape(20.dp)),
+                    color = Color(0xFFF0F0F0)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            when (location.category) {
+                                "Mount" -> Icons.Default.Terrain
+                                "Beach" -> Icons.Default.Water
+                                "Crater" -> Icons.Default.Terrain
+                                "Waterfall" -> Icons.Default.Water
+                                "Forest" -> Icons.Default.Forest
+                                "Temple" -> Icons.Default.Apartment
+                                "Museum" -> Icons.Default.Museum
+                                "Park" -> Icons.Default.Park
+                                else -> Icons.Default.Place
+                            },
+                            contentDescription = location.category,
+                            modifier = Modifier.size(16.dp),
+                            tint = Color(0xFFE8725E)
+                        )
+                        Text(
+                            location.category,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color.Black,
+                            modifier = Modifier.padding(start = 6.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        item {
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+        }
+
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "Reviews (${reviews.size})",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+
+                Button(
+                    onClick = onAddReviewClick,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFE8725E)
+                    ),
+                    modifier = Modifier.height(36.dp),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "Add Review",
+                        modifier = Modifier
+                            .size(16.dp)
+                            .padding(end = 4.dp)
+                    )
+                    Text("Add Review", fontSize = 12.sp)
+                }
+            }
+        }
+
+        if (isLoading) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
+
+        if (reviews.isEmpty() && !isLoading) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "No reviews yet. Be the first to review!",
+                        color = Color.Gray,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        }
+
+        if (reviews.isNotEmpty()) {
+            items(reviews) { review ->
+                ReviewCard(
+                    review = review,
+                    onDeleteClick = { onDeleteReview(review.id) }
+                )
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
+
+@Composable
+fun RatingStars(rating: Float, size: androidx.compose.ui.unit.Dp = 16.dp) {
+    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+        repeat(5) { index ->
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = "Star",
+                modifier = Modifier.size(size),
+                tint = if (index < rating.toInt()) Color(0xFFE8725E) else Color.LightGray
+            )
+        }
+    }
+}
+
+@Composable
+fun ReviewCard(
+    review: Review,
+    onDeleteClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .clip(RoundedCornerShape(12.dp)),
+        color = Color(0xFFFAFAFA),
+        shadowElevation = 1.dp
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(RoundedCornerShape(50)),
+                        color = Color.LightGray
+                    ) {
+                        if (review.userImage.isNotEmpty()) {
+                            AsyncImage(
+                                model = review.userImage,
+                                contentDescription = review.userName,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        } else {
+                            Icon(
+                                Icons.Default.AccountCircle,
+                                contentDescription = review.userName,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(4.dp),
+                                tint = Color.Gray
+                            )
+                        }
+                    }
+
+                    Column(modifier = Modifier.padding(start = 12.dp)) {
+                        Text(
+                            review.userName,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+                        Text(
+                            formatTimestamp(review.timestamp),
+                            fontSize = 11.sp,
+                            color = Color.Gray
+                        )
+                    }
+                }
+
+                IconButton(
+                    onClick = onDeleteClick,
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        modifier = Modifier.size(18.dp),
+                        tint = Color.Gray
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier.padding(top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RatingStars(rating = review.rating, size = 14.dp)
+                Text(
+                    String.format("%.1f", review.rating),
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    modifier = Modifier.padding(start = 6.dp)
+                )
+            }
+
+            if (review.comment.isNotEmpty()) {
+                Text(
+                    review.comment,
+                    fontSize = 13.sp,
+                    color = Color.Black,
+                    modifier = Modifier.padding(top = 8.dp),
+                    lineHeight = 18.sp
+                )
+            }
+
+            if (review.photos.isNotEmpty()) {
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(review.photos) { photoUrl ->
+                        AsyncImage(
+                            model = photoUrl,
+                            contentDescription = "Review photo",
+                            modifier = Modifier
+                                .size(80.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+fun formatTimestamp(timestamp: Long): String {
+    val sdf = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+    return sdf.format(Date(timestamp))
+}
