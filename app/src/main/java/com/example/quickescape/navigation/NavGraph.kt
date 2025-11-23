@@ -16,20 +16,24 @@ import com.example.quickescape.ui.auth.SignUpScreen
 import com.example.quickescape.ui.onboarding.OnboardingScreen
 import com.example.quickescape.ui.home.AddReviewScreen
 import com.example.quickescape.ui.home.DetailLocationScreen
+import com.example.quickescape.ui.home.ExploreScreen
 import com.example.quickescape.ui.home.HomeScreen
 import com.example.quickescape.ui.home.SearchScreen
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
+import androidx.compose.ui.Modifier
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    startDestination: String = Screen.Onboarding.route
+    startDestination: String = Screen.Onboarding.route,
+    modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        modifier = modifier
     ) {
         composable(Screen.Onboarding.route) {
             OnboardingScreen(
@@ -246,6 +250,60 @@ fun NavGraph(
                     }
                 )
             }
+        }
+
+        composable(Screen.Explore.route) {
+            val firestore = FirebaseFirestore.getInstance()
+            val storage = FirebaseStorage.getInstance()
+            val repository = LocationRepository(firestore, storage)
+            val viewModel: LocationViewModel = viewModel(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        return LocationViewModel(repository) as T
+                    }
+                }
+            )
+
+            var userLocation by remember { mutableStateOf("") }
+            var userLat by remember { mutableStateOf(0.0) }
+            var userLon by remember { mutableStateOf(0.0) }
+            val nearbyLocations by viewModel.nearbyLocations.collectAsState()
+            val isLoading by viewModel.isLoading.collectAsState()
+            val context = androidx.compose.ui.platform.LocalContext.current
+
+            // Request location permissions dan get user location
+            LaunchedEffect(Unit) {
+                val locationManager = com.example.quickescape.data.helper.LocationManager(context)
+                val lastLocation = locationManager.getLastKnownLocation()
+                if (lastLocation != null) {
+                    userLat = lastLocation.latitude
+                    userLon = lastLocation.longitude
+                    userLocation = "${String.format("%.4f", userLat)}, ${String.format("%.4f", userLon)}"
+                    viewModel.loadNearbyLocations(userLat, userLon, 50f)
+                } else {
+                    userLocation = "Location not available"
+                }
+                locationManager.startLocationUpdates()
+            }
+
+            ExploreScreen(
+                nearbyLocations = nearbyLocations,
+                isLoading = isLoading,
+                userLocation = userLocation,
+                onLocationClick = { location ->
+                    navController.navigate(Screen.DetailLocation.createRoute(location.id))
+                },
+                onRetryClick = {
+                    val locationManager = com.example.quickescape.data.helper.LocationManager(context)
+                    val lastLocation = locationManager.getLastKnownLocation()
+                    if (lastLocation != null) {
+                        userLat = lastLocation.latitude
+                        userLon = lastLocation.longitude
+                        userLocation = "${String.format("%.4f", userLat)}, ${String.format("%.4f", userLon)}"
+                        viewModel.loadNearbyLocations(userLat, userLon, 50f)
+                    }
+                }
+            )
         }
     }
 }

@@ -15,6 +15,9 @@ class LocationViewModel(private val repository: LocationRepository) : ViewModel(
     private val _locations = MutableStateFlow<List<Location>>(emptyList())
     val locations: StateFlow<List<Location>> = _locations
 
+    private val _nearbyLocations = MutableStateFlow<List<Pair<Location, Float>>>(emptyList())
+    val nearbyLocations: StateFlow<List<Pair<Location, Float>>> = _nearbyLocations
+
     private val _reviews = MutableStateFlow<List<Review>>(emptyList())
     val reviews: StateFlow<List<Review>> = _reviews
 
@@ -120,6 +123,20 @@ class LocationViewModel(private val repository: LocationRepository) : ViewModel(
                 loadLocationById(locationId)
             } catch (e: Exception) {
                 _error.value = e.message
+            }
+        }
+    }
+
+    fun loadNearbyLocations(userLat: Double, userLon: Double, radiusKm: Float = 50f) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            try {
+                val result = repository.getNearbyLocations(userLat, userLon, radiusKm)
+                _nearbyLocations.value = result
+            } catch (e: Exception) {
+                _error.value = e.message
+            } finally {
+                _isLoading.value = false
             }
         }
     }

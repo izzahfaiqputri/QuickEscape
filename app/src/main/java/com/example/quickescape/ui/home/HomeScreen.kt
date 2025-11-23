@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
@@ -34,7 +33,6 @@ fun HomeScreen(
     onCategoryClick: (String) -> Unit,
     onMenuClick: () -> Unit
 ) {
-    var selectedTab by remember { mutableStateOf(0) }
     var selectedCategory by remember { mutableStateOf("All") }
 
     val categories = listOf(
@@ -42,188 +40,133 @@ fun HomeScreen(
         "Forest", "Temple", "Museum", "Historical", "Park", "Hidden Gem", "Shopping", "Monument"
     )
 
-    Scaffold(
-        bottomBar = {
-            NavigationBar(
-                containerColor = Color.Black,
-                modifier = Modifier.height(60.dp)
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
+        // Header dengan Search dan Profile
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                NavigationBarItem(
-                    icon = { Icon(Icons.Outlined.Home, contentDescription = "Home", tint = Color.White) },
-                    label = { Text("Home", color = Color.White, fontSize = 10.sp) },
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color.Transparent,
-                        selectedIconColor = Color.White,
-                        unselectedIconColor = Color.Gray
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        "Wonderful Indonesia",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black
                     )
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Outlined.LocationOn, contentDescription = "Explore", tint = Color.White) },
-                    label = { Text("Explore", color = Color.White, fontSize = 10.sp) },
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color.Transparent,
-                        selectedIconColor = Color.White,
-                        unselectedIconColor = Color.Gray
+                    Text(
+                        "Let's Explore Together",
+                        fontSize = 14.sp,
+                        color = Color.Gray
                     )
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.ChatBubble, contentDescription = "Messages", tint = Color.White) },
-                    label = { Text("Messages", color = Color.White, fontSize = 10.sp) },
-                    selected = selectedTab == 2,
-                    onClick = { selectedTab = 2 },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color.Transparent,
-                        selectedIconColor = Color.White,
-                        unselectedIconColor = Color.Gray
+                }
+
+                Surface(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(50))
+                        .clickable { onMenuClick() },
+                    color = Color.LightGray
+                ) {
+                    Icon(
+                        Icons.Default.AccountCircle,
+                        contentDescription = "Profile",
+                        modifier = Modifier.padding(8.dp),
+                        tint = Color.Gray
                     )
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Outlined.Person, contentDescription = "Profile", tint = Color.White) },
-                    label = { Text("Profile", color = Color.White, fontSize = 10.sp) },
-                    selected = selectedTab == 3,
-                    onClick = { selectedTab = 3 },
-                    colors = NavigationBarItemDefaults.colors(
-                        indicatorColor = Color.Transparent,
-                        selectedIconColor = Color.White,
-                        unselectedIconColor = Color.Gray
-                    )
-                )
+                }
             }
         }
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(Color.White)
-        ) {
-            // Header dengan Search dan Profile
-            item {
+
+        // Search Bar
+        item {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .clickable { onSearchClick() },
+                color = Color(0xFFF5F5F5)
+            ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                        .padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            "Wonderful Indonesia",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black
-                        )
-                        Text(
-                            "Let's Explore Together",
-                            fontSize = 14.sp,
-                            color = Color.Gray
-                        )
-                    }
-
-                    Surface(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(RoundedCornerShape(50))
-                            .clickable { onMenuClick() },
-                        color = Color.LightGray
-                    ) {
-                        Icon(
-                            Icons.Default.AccountCircle,
-                            contentDescription = "Profile",
-                            modifier = Modifier.padding(8.dp),
-                            tint = Color.Gray
-                        )
-                    }
-                }
-            }
-
-            // Search Bar
-            item {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .clickable { onSearchClick() },
-                    color = Color(0xFFF5F5F5)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Default.Search,
-                            contentDescription = "Search",
-                            tint = Color.Gray,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Text(
-                            "Search destination...",
-                            color = Color.Gray,
-                            fontSize = 14.sp,
-                            modifier = Modifier.padding(start = 8.dp)
-                        )
-                    }
-                }
-            }
-
-            // Category Tabs
-            item {
-                LazyRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(categories) { category ->
-                        CategoryChip(
-                            label = category,
-                            isSelected = selectedCategory == category,
-                            onClick = {
-                                selectedCategory = category
-                                onCategoryClick(category)
-                            }
-                        )
-                    }
-                }
-            }
-
-            // Title "All" atau category name
-            item {
-                Text(
-                    if (selectedCategory == "All") "All" else selectedCategory,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(16.dp),
-                    color = Color.Black
-                )
-            }
-
-            // Locations List
-            if (isLoading) {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-            } else {
-                items(locations) { location ->
-                    LocationCard(
-                        location = location,
-                        onClick = { onLocationClick(location) }
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = "Search",
+                        tint = Color.Gray,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Text(
+                        "Search destination...",
+                        color = Color.Gray,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(start = 8.dp)
                     )
                 }
+            }
+        }
+
+        // Category Tabs
+        item {
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(categories) { category ->
+                    CategoryChip(
+                        label = category,
+                        isSelected = selectedCategory == category,
+                        onClick = {
+                            selectedCategory = category
+                            onCategoryClick(category)
+                        }
+                    )
+                }
+            }
+        }
+
+        // Title "All" atau category name
+        item {
+            Text(
+                if (selectedCategory == "All") "All" else selectedCategory,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(16.dp),
+                color = Color.Black
+            )
+        }
+
+        // Locations List
+        if (isLoading) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        } else {
+            items(locations) { location ->
+                LocationCard(
+                    location = location,
+                    onClick = { onLocationClick(location) }
+                )
             }
         }
     }
@@ -349,4 +292,3 @@ fun LocationCard(
         }
     }
 }
-

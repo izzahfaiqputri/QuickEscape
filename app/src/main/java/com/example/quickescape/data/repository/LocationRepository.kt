@@ -168,4 +168,29 @@ class LocationRepository(
             throw Exception("Failed to delete review")
         }
     }
+
+    suspend fun getNearbyLocations(userLat: Double, userLon: Double, radiusKm: Float = 50f): List<Pair<Location, Float>> {
+        return try {
+            val allLocations = getLocations()
+            allLocations.mapNotNull { location ->
+                val distance = calculateDistance(
+                    userLat, userLon,
+                    location.location.latitude, location.location.longitude
+                )
+                if (distance <= radiusKm) {
+                    Pair(location, distance)
+                } else {
+                    null
+                }
+            }.sortedBy { it.second } // Sort by distance (terdekat dulu)
+        } catch (_: Exception) {
+            emptyList()
+        }
+    }
+
+    private fun calculateDistance(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Float {
+        val results = FloatArray(1)
+        android.location.Location.distanceBetween(lat1, lon1, lat2, lon2, results)
+        return results[0] / 1000 // Convert to km
+    }
 }
