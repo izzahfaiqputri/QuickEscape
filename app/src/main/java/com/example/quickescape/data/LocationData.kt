@@ -1,0 +1,560 @@
+package com.example.quickescape.data
+
+import com.example.quickescape.data.model.Location
+import com.google.firebase.firestore.GeoPoint
+
+object LocationData {
+    val locations = listOf(
+        Location(
+            name = "Gunung Bromo",
+            island = "Jawa",
+            city = "Probolinggo",
+            category = "Mount",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 150000,
+            location = GeoPoint(-7.942494, 112.953011),
+            image = "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+        ),
+        Location(
+            name = "Pantai Kuta",
+            island = "Bali",
+            city = "Badung",
+            category = "Beach",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 10000,
+            location = GeoPoint(-8.718447, 115.169186),
+            image = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+        ),
+        Location(
+            name = "Kawah Ijen",
+            island = "Jawa",
+            city = "Banyuwangi",
+            category = "Crater",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 50000,
+            location = GeoPoint(-8.058331, 114.242416),
+            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+        ),
+        Location(
+            name = "Coban Rondo",
+            island = "Jawa",
+            city = "Malang",
+            category = "Waterfall",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 30000,
+            location = GeoPoint(-7.884646, 112.476824),
+            image = "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+        ),
+        Location(
+            name = "Hutan Pinus Umbulrejo",
+            island = "Jawa",
+            city = "Malang",
+            category = "Forest",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 10000,
+            location = GeoPoint(-8.048098, 112.540332),
+            image = "https://images.unsplash.com/photo-1511497584788-876760111969"
+        ),
+        Location(
+            name = "Pantai Balekambang",
+            island = "Jawa",
+            city = "Malang",
+            category = "Beach",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 15000,
+            location = GeoPoint(-8.403446, 112.539126),
+            image = "https://images.unsplash.com/photo-1519046904884-53103b34b206"
+        ),
+        Location(
+            name = "Museum Brawijaya",
+            island = "Jawa",
+            city = "Malang",
+            category = "Museum",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 10000,
+            location = GeoPoint(-7.971984, 112.621220),
+            image = "https://images.unsplash.com/photo-1528502499754-986f2e4d67c4"
+        ),
+        Location(
+            name = "Sumber Maron",
+            island = "Jawa",
+            city = "Malang",
+            category = "Hidden Gem",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 15000,
+            location = GeoPoint(-8.165610, 112.592033),
+            image = "https://images.unsplash.com/photo-1493558103817-58b2924bce98"
+        ),
+        Location(
+            name = "Candi Borobudur",
+            island = "Jawa",
+            city = "Magelang",
+            category = "Temple",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 50000,
+            location = GeoPoint(-7.607874, 110.203751),
+            image = "https://images.unsplash.com/photo-1596402184320-417e7178b2cd"
+        ),
+        Location(
+            name = "Candi Prambanan",
+            island = "Jawa",
+            city = "Sleman",
+            category = "Temple",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 50000,
+            location = GeoPoint(-7.752020, 110.491470),
+            image = "https://images.unsplash.com/photo-1548048026-5a1a941d93d3"
+        ),
+        Location(
+            name = "Pantai Parangtritis",
+            island = "Jawa",
+            city = "Bantul",
+            category = "Beach",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 10000,
+            location = GeoPoint(-8.024897, 110.329384),
+            image = "https://images.unsplash.com/photo-1505142468610-359e7d316be0"
+        ),
+        Location(
+            name = "Malioboro",
+            island = "Jawa",
+            city = "Yogyakarta",
+            category = "Shopping",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 0,
+            location = GeoPoint(-7.792970, 110.365510),
+            image = "https://images.unsplash.com/photo-1555881788-741bfb4e6d3e"
+        ),
+        Location(
+            name = "Keraton Yogyakarta",
+            island = "Jawa",
+            city = "Yogyakarta",
+            category = "Museum",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 15000,
+            location = GeoPoint(-7.805274, 110.364304),
+            image = "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86"
+        ),
+        Location(
+            name = "Gunung Merapi",
+            island = "Jawa",
+            city = "Sleman",
+            category = "Mount",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 100000,
+            location = GeoPoint(-7.540574, 110.446200),
+            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+        ),
+        Location(
+            name = "Taman Sari",
+            island = "Jawa",
+            city = "Yogyakarta",
+            category = "Historical",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 15000,
+            location = GeoPoint(-7.809840, 110.359290),
+            image = "https://images.unsplash.com/photo-1548048026-5a1a941d93d3"
+        ),
+        Location(
+            name = "Tanah Lot",
+            island = "Bali",
+            city = "Tabanan",
+            category = "Temple",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 60000,
+            location = GeoPoint(-8.621210, 115.086790),
+            image = "https://images.unsplash.com/photo-1537996194471-e657df975ab4"
+        ),
+        Location(
+            name = "Ubud Monkey Forest",
+            island = "Bali",
+            city = "Gianyar",
+            category = "Forest",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 80000,
+            location = GeoPoint(-8.519520, 115.258450),
+            image = "https://images.unsplash.com/photo-1558618666-fcd25c85cd64"
+        ),
+        Location(
+            name = "Tegallalang Rice Terrace",
+            island = "Bali",
+            city = "Gianyar",
+            category = "Hidden Gem",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 20000,
+            location = GeoPoint(-8.431130, 115.278170),
+            image = "https://images.unsplash.com/photo-1555400038-63f526cd0ca2"
+        ),
+        Location(
+            name = "Uluwatu Temple",
+            island = "Bali",
+            city = "Badung",
+            category = "Temple",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 50000,
+            location = GeoPoint(-8.829070, 115.084850),
+            image = "https://images.unsplash.com/photo-1537996994137-e7675fc0d6c0"
+        ),
+        Location(
+            name = "Pantai Sanur",
+            island = "Bali",
+            city = "Denpasar",
+            category = "Beach",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 0,
+            location = GeoPoint(-8.689770, 115.263340),
+            image = "https://images.unsplash.com/photo-1506953823976-52e1fdc0149a"
+        ),
+        Location(
+            name = "Gunung Batur",
+            island = "Bali",
+            city = "Bangli",
+            category = "Mount",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 350000,
+            location = GeoPoint(-8.242170, 115.375130),
+            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+        ),
+        Location(
+            name = "Nusa Penida",
+            island = "Bali",
+            city = "Klungkung",
+            category = "Hidden Gem",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 200000,
+            location = GeoPoint(-8.729260, 115.544900),
+            image = "https://images.unsplash.com/photo-1559827260-dc66d52bef19"
+        ),
+        Location(
+            name = "Seminyak Beach",
+            island = "Bali",
+            city = "Badung",
+            category = "Beach",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 0,
+            location = GeoPoint(-8.691580, 115.167260),
+            image = "https://images.unsplash.com/photo-1559827260-dc66d52bef19"
+        ),
+        Location(
+            name = "Tirta Empul",
+            island = "Bali",
+            city = "Gianyar",
+            category = "Temple",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 50000,
+            location = GeoPoint(-8.415100, 115.315200),
+            image = "https://images.unsplash.com/photo-1537996994137-e7675fc0d6c0"
+        ),
+        Location(
+            name = "Tegenungan Waterfall",
+            island = "Bali",
+            city = "Gianyar",
+            category = "Waterfall",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 20000,
+            location = GeoPoint(-8.576010, 115.288100),
+            image = "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+        ),
+        Location(
+            name = "Pantai Pandawa",
+            island = "Bali",
+            city = "Badung",
+            category = "Beach",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 15000,
+            location = GeoPoint(-8.845880, 115.176920),
+            image = "https://images.unsplash.com/photo-1519046904884-53103b34b206"
+        ),
+        Location(
+            name = "Monas",
+            island = "Jawa",
+            city = "Jakarta",
+            category = "Monument",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 10000,
+            location = GeoPoint(-6.175392, 106.827153),
+            image = "https://images.unsplash.com/photo-1555217851-6141535bd771"
+        ),
+        Location(
+            name = "Kota Tua Jakarta",
+            island = "Jawa",
+            city = "Jakarta",
+            category = "Historical",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 0,
+            location = GeoPoint(-6.135100, 106.813301),
+            image = "https://images.unsplash.com/photo-1548048026-5a1a941d93d3"
+        ),
+        Location(
+            name = "Ancol Dreamland",
+            island = "Jawa",
+            city = "Jakarta",
+            category = "Beach",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 25000,
+            location = GeoPoint(-6.122840, 106.842507),
+            image = "https://images.unsplash.com/photo-1519046904884-53103b34b206"
+        ),
+        Location(
+            name = "Taman Mini Indonesia Indah",
+            island = "Jawa",
+            city = "Jakarta",
+            category = "Park",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 20000,
+            location = GeoPoint(-6.302440, 106.895270),
+            image = "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+        ),
+        Location(
+            name = "Kawah Putih",
+            island = "Jawa",
+            city = "Bandung",
+            category = "Crater",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 50000,
+            location = GeoPoint(-7.166230, 107.402420),
+            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+        ),
+        Location(
+            name = "Tangkuban Perahu",
+            island = "Jawa",
+            city = "Bandung",
+            category = "Mount",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 30000,
+            location = GeoPoint(-6.759590, 107.609490),
+            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+        ),
+        Location(
+            name = "Gedung Sate",
+            island = "Jawa",
+            city = "Bandung",
+            category = "Historical",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 0,
+            location = GeoPoint(-6.902170, 107.618650),
+            image = "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86"
+        ),
+        Location(
+            name = "Farmhouse Lembang",
+            island = "Jawa",
+            city = "Bandung",
+            category = "Hidden Gem",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 30000,
+            location = GeoPoint(-6.810600, 107.617900),
+            image = "https://images.unsplash.com/photo-1464207687429-7505649dae38"
+        ),
+        Location(
+            name = "Pantai Pangandaran",
+            island = "Jawa",
+            city = "Pangandaran",
+            category = "Beach",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 15000,
+            location = GeoPoint(-7.683460, 108.648410),
+            image = "https://images.unsplash.com/photo-1505142468610-359e7d316be0"
+        ),
+        Location(
+            name = "Green Canyon",
+            island = "Jawa",
+            city = "Pangandaran",
+            category = "Hidden Gem",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 50000,
+            location = GeoPoint(-7.690960, 108.480380),
+            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+        ),
+        Location(
+            name = "Gunung Semeru",
+            island = "Jawa",
+            city = "Lumajang",
+            category = "Mount",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 200000,
+            location = GeoPoint(-8.107690, 112.922130),
+            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+        ),
+        Location(
+            name = "Pulau Sempu",
+            island = "Jawa",
+            city = "Malang",
+            category = "Hidden Gem",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 100000,
+            location = GeoPoint(-8.441400, 112.690200),
+            image = "https://images.unsplash.com/photo-1559827260-dc66d52bef19"
+        ),
+        Location(
+            name = "Pantai Klayar",
+            island = "Jawa",
+            city = "Pacitan",
+            category = "Beach",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 10000,
+            location = GeoPoint(-8.263350, 111.180230),
+            image = "https://images.unsplash.com/photo-1505142468610-359e7d316be0"
+        ),
+        Location(
+            name = "Candi Sukuh",
+            island = "Jawa",
+            city = "Karanganyar",
+            category = "Temple",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 15000,
+            location = GeoPoint(-7.627140, 111.127920),
+            image = "https://images.unsplash.com/photo-1548048026-5a1a941d93d3"
+        ),
+        Location(
+            name = "Taman Safari Prigen",
+            island = "Jawa",
+            city = "Pasuruan",
+            category = "Park",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 100000,
+            location = GeoPoint(-7.729920, 112.635560),
+            image = "https://images.unsplash.com/photo-1564760055775-d63b17a55c44"
+        ),
+        Location(
+            name = "Pantai Nglambor",
+            island = "Jawa",
+            city = "Gunungkidul",
+            category = "Beach",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 10000,
+            location = GeoPoint(-8.156090, 110.690280),
+            image = "https://images.unsplash.com/photo-1519046904884-53103b34b206"
+        ),
+        Location(
+            name = "Jatim Park 2",
+            island = "Jawa",
+            city = "Batu",
+            category = "Park",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 120000,
+            location = GeoPoint(-7.889940, 112.528330),
+            image = "https://images.unsplash.com/photo-1564760055775-d63b17a55c44"
+        ),
+        Location(
+            name = "Bromo Tengger Semeru",
+            island = "Jawa",
+            city = "Probolinggo",
+            category = "Mount",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 250000,
+            location = GeoPoint(-7.969000, 112.946000),
+            image = "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+        ),
+        Location(
+            name = "Air Terjun Madakaripura",
+            island = "Jawa",
+            city = "Probolinggo",
+            category = "Waterfall",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 25000,
+            location = GeoPoint(-7.943970, 112.987840),
+            image = "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+        ),
+        Location(
+            name = "Jimbaran Beach",
+            island = "Bali",
+            city = "Badung",
+            category = "Beach",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 0,
+            location = GeoPoint(-8.761790, 115.166750),
+            image = "https://images.unsplash.com/photo-1505142468610-359e7d316be0"
+        ),
+        Location(
+            name = "Campuhan Ridge Walk",
+            island = "Bali",
+            city = "Gianyar",
+            category = "Hidden Gem",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 0,
+            location = GeoPoint(-8.506190, 115.253710),
+            image = "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800"
+        ),
+        Location(
+            name = "Goa Gajah",
+            island = "Bali",
+            city = "Gianyar",
+            category = "Temple",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 50000,
+            location = GeoPoint(-8.522820, 115.286850),
+            image = "https://images.unsplash.com/photo-1537996994137-e7675fc0d6c0"
+        ),
+        Location(
+            name = "Besakih Temple",
+            island = "Bali",
+            city = "Karangasem",
+            category = "Temple",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 60000,
+            location = GeoPoint(-8.374220, 115.451080),
+            image = "https://images.unsplash.com/photo-1537996994137-e7675fc0d6c0"
+        ),
+        Location(
+            name = "Gitgit Waterfall",
+            island = "Bali",
+            city = "Buleleng",
+            category = "Waterfall",
+            rating = 0f,
+            ratingCount = 0,
+            price_start = 20000,
+            location = GeoPoint(-8.257590, 115.140050),
+            image = "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+        )
+    )
+}
+

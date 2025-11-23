@@ -69,6 +69,21 @@ dependencies {
     // Compose Icons Extended
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
+    // Firebase Firestore
+    implementation(libs.firebase.firestore.ktx)
+
+    // Firebase Storage
+    implementation("com.google.firebase:firebase-storage-ktx")
+
+    // Coil for image loading
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Accompanist Permissions
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
+
+    // AndroidX Core untuk FileProvider
+    implementation("androidx.core:core:1.10.1")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
