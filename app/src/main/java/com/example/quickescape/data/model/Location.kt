@@ -33,3 +33,11 @@ data class LocationWithReviews(
     val averageRating: Float = location.rating
 )
 
+data class UserProfile(
+    val id: String = "",
+    val name: String = "",
+    val email: String = "",
+    val profileImage: String = "",
+    val savedLocations: List<String> = emptyList(), // List of location IDs
+    val createdAt: Long = System.currentTimeMillis()
+)

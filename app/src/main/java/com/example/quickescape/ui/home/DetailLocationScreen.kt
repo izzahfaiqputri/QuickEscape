@@ -34,9 +34,12 @@ fun DetailLocationScreen(
     isLoading: Boolean,
     onBackClick: () -> Unit,
     onAddReviewClick: () -> Unit,
-    onSaveClick: () -> Unit,
-    onDeleteReview: (String) -> Unit
+    onSaveClick: (String) -> Unit,
+    onDeleteReview: (String) -> Unit,
+    isSaved: Boolean = false
 ) {
+    var saved by remember { mutableStateOf(isSaved) }
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -79,15 +82,18 @@ fun DetailLocationScreen(
                         .padding(12.dp)
                         .size(40.dp)
                         .clip(RoundedCornerShape(50))
-                        .clickable { onSaveClick() },
+                        .clickable {
+                            saved = !saved
+                            onSaveClick(location.id)
+                        },
                     color = Color.White,
                     shadowElevation = 4.dp
                 ) {
                     Icon(
-                        Icons.Default.BookmarkBorder,
-                        contentDescription = "Save",
+                        if (saved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                        contentDescription = if (saved) "Unsave" else "Save",
                         modifier = Modifier.padding(8.dp),
-                        tint = Color(0xFFE8725E)
+                        tint = if (saved) Color(0xFFE8725E) else Color(0xFFE8725E)
                     )
                 }
             }

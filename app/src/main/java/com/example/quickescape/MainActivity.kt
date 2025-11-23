@@ -39,11 +39,12 @@ class MainActivity : ComponentActivity() {
                         val navBackStackEntry = navController.currentBackStackEntryAsState()
                         val currentRoute = navBackStackEntry.value?.destination?.route
 
-                        // Tampilkan bottom nav hanya di home, explore, dan search
+                        // Tampilkan bottom nav hanya di home, explore, search, dan profile
                         if (currentRoute in listOf(
                                 Screen.Home.route,
                                 Screen.Explore.route,
-                                Screen.Search.route
+                                Screen.Search.route,
+                                Screen.Profile.route
                             )) {
                             BottomNavigationBar(
                                 currentRoute = currentRoute,
