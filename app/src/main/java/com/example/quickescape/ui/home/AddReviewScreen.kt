@@ -364,41 +364,60 @@ fun AddReviewScreen(
         }
 
         // Fixed Submit Button at Bottom
-        Button(
-            onClick = {
-                if (rating > 0 && userName.isNotBlank() && comment.isNotBlank()) {
-                    isSubmitting = true
-                    val review = Review(
-                        userName = userName,
-                        rating = rating,
-                        comment = comment,
-                        timestamp = System.currentTimeMillis(),
-                        userImage = "",
-                        photos = emptyList()
-                    )
-                    val photoList = if (selectedPhoto != null) listOf(selectedPhoto!!) else emptyList()
-                    onSubmitClick(review, photoList)
-                }
-            },
+        Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
                 .padding(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFE8725E),
-                disabledContainerColor = Color.LightGray
-            ),
+            color = Color(0xFFE8725E),
             shape = RoundedCornerShape(12.dp),
-            enabled = rating > 0 && userName.isNotBlank() && comment.isNotBlank() && !isSubmitting
+            shadowElevation = 8.dp
         ) {
-            if (isSubmitting) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = Color.White,
-                    strokeWidth = 2.dp
-                )
-            } else {
-                Text("Submit Review", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
+            Button(
+                onClick = {
+                    if (rating > 0 && userName.isNotBlank() && comment.isNotBlank()) {
+                        isSubmitting = true
+                        val review = Review(
+                            userName = userName,
+                            rating = rating,
+                            comment = comment,
+                            timestamp = System.currentTimeMillis(),
+                            userImage = "",
+                            photos = emptyList()
+                        )
+                        val photoList = if (selectedPhoto != null) listOf(selectedPhoto!!) else emptyList()
+                        onSubmitClick(review, photoList)
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFE8725E),
+                    disabledContainerColor = Color.LightGray
+                ),
+                shape = RoundedCornerShape(12.dp),
+                enabled = rating > 0 && userName.isNotBlank() && comment.isNotBlank() && !isSubmitting
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    if (isSubmitting) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.White,
+                            strokeWidth = 3.dp
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                    }
+                    Text(
+                        "SUBMIT",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
             }
         }
     }

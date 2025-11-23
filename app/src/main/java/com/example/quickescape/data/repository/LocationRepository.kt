@@ -35,7 +35,7 @@ class LocationRepository(
             snapshot.documents.mapNotNull { doc ->
                 doc.toObject(Location::class.java)?.copy(id = doc.id)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyList()
         }
     }
@@ -44,22 +44,22 @@ class LocationRepository(
         return try {
             val doc = firestore.collection("locations").document(locationId).get().await()
             doc.toObject(Location::class.java)?.copy(id = doc.id)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
 
     suspend fun searchLocations(query: String): List<Location> {
         return try {
-            val snapshot = firestore.collection("locations")
-                .whereGreaterThanOrEqualTo("name", query)
-                .whereLessThan("name", query + "\uf8ff")
-                .get()
-                .await()
-            snapshot.documents.mapNotNull { doc ->
-                doc.toObject(Location::class.java)?.copy(id = doc.id)
+            // Get all locations and filter client-side for better search experience
+            val allLocations = getLocations()
+            allLocations.filter { location ->
+                location.name.contains(query, ignoreCase = true) ||
+                location.city.contains(query, ignoreCase = true) ||
+                location.island.contains(query, ignoreCase = true) ||
+                location.category.contains(query, ignoreCase = true)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyList()
         }
     }
@@ -73,7 +73,7 @@ class LocationRepository(
             snapshot.documents.mapNotNull { doc ->
                 doc.toObject(Location::class.java)?.copy(id = doc.id)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyList()
         }
     }
@@ -132,7 +132,7 @@ class LocationRepository(
             snapshot.documents.mapNotNull { doc ->
                 doc.toObject(Review::class.java)?.copy(id = doc.id)
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emptyList()
         }
     }
@@ -164,8 +164,8 @@ class LocationRepository(
                 .delete()
                 .await()
             updateLocationRating(locationId)
-        } catch (e: Exception) {
-            throw e
+        } catch (_: Exception) {
+            throw Exception("Failed to delete review")
         }
     }
 }

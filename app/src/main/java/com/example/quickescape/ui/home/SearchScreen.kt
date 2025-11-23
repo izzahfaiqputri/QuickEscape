@@ -1,7 +1,6 @@
 package com.example.quickescape.ui.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,18 +29,39 @@ fun SearchScreen(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     var searchResults by remember { mutableStateOf<List<Location>>(emptyList()) }
+    var isSearching by remember { mutableStateOf(false) }
 
-    LaunchedEffect(searchQuery) {
-        if (searchQuery.isNotEmpty()) {
-            onSearch(searchQuery)
+    // Filter results berdasarkan searchQuery
+    fun performSearch(query: String) {
+        if (query.isNotEmpty()) {
             searchResults = locations.filter { location ->
-                location.name.contains(searchQuery, ignoreCase = true) ||
-                location.city.contains(searchQuery, ignoreCase = true) ||
-                location.island.contains(searchQuery, ignoreCase = true) ||
-                location.category.contains(searchQuery, ignoreCase = true)
+                location.name.contains(query, ignoreCase = true) ||
+                location.city.contains(query, ignoreCase = true) ||
+                location.island.contains(query, ignoreCase = true) ||
+                location.category.contains(query, ignoreCase = true)
             }
         } else {
             searchResults = emptyList()
+        }
+    }
+
+    // Update hasil pencarian ketika user mengetik
+    LaunchedEffect(searchQuery) {
+        if (searchQuery.isNotEmpty()) {
+            isSearching = true
+            onSearch(searchQuery)
+            // Lakukan filtering local
+            performSearch(searchQuery)
+            isSearching = false
+        } else {
+            searchResults = emptyList()
+        }
+    }
+
+    // Update hasil ketika locations berubah
+    LaunchedEffect(locations) {
+        if (searchQuery.isNotEmpty()) {
+            performSearch(searchQuery)
         }
     }
 
@@ -50,7 +70,7 @@ fun SearchScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // Header with Search Bar
+        // Header dengan Search Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -77,9 +97,13 @@ fun SearchScreen(
             ) {
                 TextField(
                     value = searchQuery,
-                    onValueChange = { searchQuery = it },
+                    onValueChange = { newQuery ->
+                        searchQuery = newQuery
+                    },
                     placeholder = { Text("Search destination...", color = Color.Gray) },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp),
                     textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
                     colors = TextFieldDefaults.colors(
                         focusedContainerColor = Color(0xFFF5F5F5),
@@ -101,7 +125,10 @@ fun SearchScreen(
                     trailingIcon = {
                         if (searchQuery.isNotEmpty()) {
                             IconButton(
-                                onClick = { searchQuery = "" },
+                                onClick = {
+                                    searchQuery = ""
+                                    searchResults = emptyList()
+                                },
                                 modifier = Modifier.size(24.dp)
                             ) {
                                 Icon(
@@ -122,7 +149,7 @@ fun SearchScreen(
 
         // Search Results
         if (searchQuery.isEmpty()) {
-            // Empty state
+            // Empty state - sebelum user mulai mencari
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -153,8 +180,9 @@ fun SearchScreen(
                 }
             }
         } else {
+            // Menampilkan hasil pencarian
             LazyColumn(modifier = Modifier.fillMaxSize()) {
-                if (isLoading) {
+                if (isSearching || isLoading) {
                     item {
                         Box(
                             modifier = Modifier
@@ -188,6 +216,12 @@ fun SearchScreen(
                                     fontWeight = FontWeight.Bold,
                                     color = Color.Gray,
                                     modifier = Modifier.padding(top = 12.dp)
+                                )
+                                Text(
+                                    "Try searching with different keywords",
+                                    fontSize = 12.sp,
+                                    color = Color.Gray,
+                                    modifier = Modifier.padding(top = 8.dp)
                                 )
                             }
                         }
