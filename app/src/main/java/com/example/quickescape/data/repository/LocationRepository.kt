@@ -193,4 +193,116 @@ class LocationRepository(
         android.location.Location.distanceBetween(lat1, lon1, lat2, lon2, results)
         return results[0] / 1000 // Convert to km
     }
+
+    suspend fun getLocationPhotos(locationId: String): List<String> {
+        return try {
+            android.util.Log.d("LocationRepository", "=== FETCHING PHOTOS FROM FIRESTORE ===")
+            android.util.Log.d("LocationRepository", "Location ID: $locationId")
+
+            val doc = firestore.collection("locations").document(locationId).get().await()
+
+            android.util.Log.d("LocationRepository", "Document exists: ${doc.exists()}")
+
+            if (doc.exists()) {
+                // Log semua field di document
+                android.util.Log.d("LocationRepository", "Document data: ${doc.data}")
+
+                val photosField = doc.get("photos")
+                android.util.Log.d("LocationRepository", "Photos field raw: $photosField")
+                android.util.Log.d("LocationRepository", "Photos field type: ${photosField?.javaClass?.simpleName}")
+
+                // Coba ambil sebagai List<String> langsung
+                @Suppress("UNCHECKED_CAST")
+                val photosList = photosField as? List<String>
+                android.util.Log.d("LocationRepository", "Photos as List<String>: $photosList")
+
+                val photos = photosList ?: emptyList()
+
+                android.util.Log.d("LocationRepository", "✓ Fetched ${photos.size} photos from Firestore")
+                photos.forEachIndexed { index, url ->
+                    android.util.Log.d("LocationRepository", "  Photo $index: $url")
+                }
+
+                photos
+            } else {
+                android.util.Log.e("LocationRepository", "❌ Document not found!")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("LocationRepository", "❌ Error fetching photos: ${e.message}", e)
+            emptyList()
+        }
+    }
+
+    suspend fun addLocationPhoto(locationId: String, photoUri: Uri) {
+        try {
+            android.util.Log.d("LocationRepository", "=== START UPLOAD PHOTO ===")
+            android.util.Log.d("LocationRepository", "Location ID: $locationId")
+            android.util.Log.d("LocationRepository", "Photo URI: $photoUri")
+            android.util.Log.d("LocationRepository", "URI Scheme: ${photoUri.scheme}")
+            android.util.Log.d("LocationRepository", "URI Path: ${photoUri.path}")
+
+            // Upload photo to Firebase Storage
+            val timestamp = System.currentTimeMillis()
+            val fileName = "location_photos/$locationId/$timestamp.jpg"
+            val storageRef = storage.reference.child(fileName)
+
+            android.util.Log.d("LocationRepository", "Storage path: $fileName")
+            android.util.Log.d("LocationRepository", "Starting upload to Firebase Storage...")
+
+            // Upload file dengan progress tracking
+            val uploadTask = storageRef.putFile(photoUri)
+
+            // Track upload progress
+            uploadTask.addOnProgressListener { taskSnapshot ->
+                val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
+                android.util.Log.d("LocationRepository", "Upload progress: $progress%")
+            }
+
+            // Tunggu upload selesai
+            uploadTask.await()
+            android.util.Log.d("LocationRepository", "✓ Upload to Storage SUCCESS!")
+
+            // Get download URL
+            val downloadUrl = storageRef.downloadUrl.await().toString()
+            android.util.Log.d("LocationRepository", "Download URL: $downloadUrl")
+
+            // Update Firestore
+            android.util.Log.d("LocationRepository", "Updating Firestore...")
+            val docRef = firestore.collection("locations").document(locationId)
+
+            // Gunakan transaction untuk memastikan update berhasil
+            firestore.runTransaction { transaction ->
+                val doc = transaction.get(docRef)
+
+                if (!doc.exists()) {
+                    throw Exception("Location document not found!")
+                }
+
+                val currentPhotos = doc.get("photos") as? List<*>
+
+                if (currentPhotos == null) {
+                    // Field photos belum ada, buat baru
+                    android.util.Log.d("LocationRepository", "Creating new 'photos' field...")
+                    transaction.update(docRef, "photos", listOf(downloadUrl))
+                } else {
+                    // Field sudah ada, tambahkan ke array
+                    android.util.Log.d("LocationRepository", "Adding to existing photos (current: ${currentPhotos.size})...")
+                    val updatedPhotos = currentPhotos.toMutableList()
+                    updatedPhotos.add(downloadUrl)
+                    transaction.update(docRef, "photos", updatedPhotos)
+                }
+            }.await()
+
+            android.util.Log.d("LocationRepository", "✓ Firestore UPDATE SUCCESS!")
+            android.util.Log.d("LocationRepository", "=== UPLOAD COMPLETE ===")
+
+        } catch (e: Exception) {
+            android.util.Log.e("LocationRepository", "❌ UPLOAD FAILED!")
+            android.util.Log.e("LocationRepository", "Error type: ${e.javaClass.simpleName}")
+            android.util.Log.e("LocationRepository", "Error message: ${e.message}")
+            android.util.Log.e("LocationRepository", "Stack trace:", e)
+            throw e
+        }
+    }
 }

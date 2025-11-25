@@ -139,6 +139,46 @@ fun NavGraph(
             )
         }
 
+        // Search Screen
+        composable(Screen.Search.route) {
+            val firestore = FirebaseFirestore.getInstance()
+            val storage = FirebaseStorage.getInstance()
+            val repository = LocationRepository(firestore, storage)
+
+            val viewModel: LocationViewModel = viewModel(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        return LocationViewModel(repository) as T
+                    }
+                }
+            )
+
+            val locations by viewModel.locations.collectAsState()
+            val isLoading by viewModel.isLoading.collectAsState()
+
+            LaunchedEffect(Unit) {
+                viewModel.loadLocations()
+            }
+
+            SearchScreen(
+                locations = locations,
+                isLoading = isLoading,
+                onBackClick = {
+                    navController.popBackStack()
+                },
+                onSearch = { query ->
+                    if (query.isNotEmpty()) {
+                        viewModel.searchLocations(query)
+                    } else {
+                        viewModel.loadLocations()
+                    }
+                },
+                onLocationClick = { location ->
+                    navController.navigate(Screen.DetailLocation.createRoute(location.id))
+                }
+            )
+        }
+
         composable(
             Screen.DetailLocation.route,
             arguments = listOf(
@@ -172,10 +212,20 @@ fun NavGraph(
             val reviews by locationViewModel.reviews.collectAsState()
             val isLoading by locationViewModel.isLoading.collectAsState()
             val userProfile by userViewModel.userProfile.collectAsState()
+            val locationPhotos by locationViewModel.locationPhotos.collectAsState()
+            val isUploadingPhoto by locationViewModel.isUploadingPhoto.collectAsState()
 
+            // Reload photos setiap kali screen ini di-compose (termasuk saat kembali dari Camera)
             LaunchedEffect(locationId) {
                 locationViewModel.loadLocationById(locationId)
+                locationViewModel.loadLocationPhotos(locationId)
                 userViewModel.loadUserProfile()
+            }
+
+            // Juga reload photos saat navBackStackEntry berubah (kembali dari Camera)
+            val navBackStackEntry = navController.currentBackStackEntry
+            LaunchedEffect(navBackStackEntry) {
+                locationViewModel.loadLocationPhotos(locationId)
             }
 
             // Derive isSaved directly from userProfile to always be in sync
@@ -202,12 +252,23 @@ fun NavGraph(
                     onDeleteReview = { reviewId ->
                         locationViewModel.deleteReview(locationId, reviewId)
                     },
-                    isSaved = isSaved
+                    isSaved = isSaved,
+                    photos = locationPhotos,
+                    onAddPhotoClick = {
+                        navController.navigate(Screen.Camera.createRoute(locationId))
+                    },
+                    isUploadingPhoto = isUploadingPhoto
                 )
             }
         }
 
-        composable(Screen.Search.route) {
+        composable(
+            Screen.Camera.route,
+            arguments = listOf(
+                navArgument("locationId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val locationId = backStackEntry.arguments?.getString("locationId") ?: ""
             val firestore = FirebaseFirestore.getInstance()
             val storage = FirebaseStorage.getInstance()
             val repository = LocationRepository(firestore, storage)
@@ -219,20 +280,48 @@ fun NavGraph(
                 }
             )
 
-            val locations by viewModel.locations.collectAsState()
-            val isLoading by viewModel.isLoading.collectAsState()
+            val coroutineScope = rememberCoroutineScope()
+            val context = androidx.compose.ui.platform.LocalContext.current
 
-            SearchScreen(
-                locations = locations,
-                isLoading = isLoading,
+            com.example.quickescape.ui.camera.CameraScreen(
                 onBackClick = {
                     navController.popBackStack()
                 },
-                onSearch = { query ->
-                    viewModel.searchLocations(query)
-                },
-                onLocationClick = { location ->
-                    navController.navigate(Screen.DetailLocation.createRoute(location.id))
+                onPhotoTaken = { photoUri ->
+                    // Show toast immediately
+                    android.widget.Toast.makeText(
+                        context,
+                        "Uploading photo...",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+
+                    // Upload foto dulu, baru pop back setelah selesai
+                    coroutineScope.launch {
+                        try {
+                            android.util.Log.d("CameraScreen", "Starting photo upload process...")
+                            viewModel.addLocationPhoto(locationId, photoUri)
+
+                            // Tampilkan success message
+                            android.widget.Toast.makeText(
+                                context,
+                                "Photo uploaded successfully!",
+                                android.widget.Toast.LENGTH_SHORT
+                            ).show()
+
+                            android.util.Log.d("CameraScreen", "Upload complete, navigating back...")
+                            kotlinx.coroutines.delay(500) // small delay untuk pastikan UI update
+                            navController.popBackStack()
+                        } catch (e: Exception) {
+                            android.util.Log.e("CameraScreen", "Upload failed: ${e.message}", e)
+                            android.widget.Toast.makeText(
+                                context,
+                                "Upload failed: ${e.message}",
+                                android.widget.Toast.LENGTH_LONG
+                            ).show()
+                            e.printStackTrace()
+                            navController.popBackStack()
+                        }
+                    }
                 }
             )
         }

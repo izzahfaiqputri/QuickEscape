@@ -36,9 +36,14 @@ fun DetailLocationScreen(
     onAddReviewClick: () -> Unit,
     onSaveClick: (String) -> Unit,
     onDeleteReview: (String) -> Unit,
-    isSaved: Boolean = false
+    isSaved: Boolean = false,
+    photos: List<String> = emptyList(),
+    onAddPhotoClick: () -> Unit = {},
+    isUploadingPhoto: Boolean = false
 ) {
     var saved by remember { mutableStateOf(isSaved) }
+    var selectedTab by remember { mutableStateOf(0) }
+    val tabs = listOf("Reviews", "Photos")
 
     LazyColumn(
         modifier = Modifier
@@ -206,77 +211,213 @@ fun DetailLocationScreen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
         }
 
+        // Tab Row
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+            ScrollableTabRow(
+                selectedTabIndex = selectedTab,
+                modifier = Modifier.fillMaxWidth(),
+                containerColor = Color.White,
+                contentColor = Color(0xFFE8725E),
+                edgePadding = 16.dp
             ) {
-                Text(
-                    "Reviews (${reviews.size})",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black
-                )
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTab == index,
+                        onClick = { selectedTab = index },
+                        text = {
+                            Text(
+                                title,
+                                fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
+                                fontSize = 14.sp
+                            )
+                        }
+                    )
+                }
+            }
+        }
 
-                Button(
-                    onClick = onAddReviewClick,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFE8725E)
-                    ),
-                    modifier = Modifier.height(36.dp),
-                    shape = RoundedCornerShape(20.dp)
-                ) {
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = "Add Review",
+        item {
+            HorizontalDivider()
+        }
+
+        // Tab Content
+        when (selectedTab) {
+            0 -> { // Reviews
+                item {
+                    Row(
                         modifier = Modifier
-                            .size(16.dp)
-                            .padding(end = 4.dp)
-                    )
-                    Text("Add Review", fontSize = 12.sp)
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            "Reviews (${reviews.size})",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+
+                        Button(
+                            onClick = onAddReviewClick,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFE8725E)
+                            ),
+                            modifier = Modifier.height(36.dp),
+                            shape = RoundedCornerShape(20.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Add,
+                                contentDescription = "Add Review",
+                                modifier = Modifier
+                                    .size(16.dp)
+                                    .padding(end = 4.dp)
+                            )
+                            Text("Add Review", fontSize = 12.sp)
+                        }
+                    }
+                }
+
+                if (isLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+
+                if (reviews.isEmpty() && !isLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(32.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                "No reviews yet. Be the first to review!",
+                                color = Color.Gray,
+                                fontSize = 14.sp
+                            )
+                        }
+                    }
+                }
+
+                if (reviews.isNotEmpty()) {
+                    items(reviews) { review ->
+                        ReviewCard(
+                            review = review,
+                            onDeleteClick = { onDeleteReview(review.id) }
+                        )
+                    }
                 }
             }
-        }
+            1 -> { // Photos
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                "Photos (${photos.size})",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
 
-        if (isLoading) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+                            Button(
+                                onClick = onAddPhotoClick,
+                                enabled = !isUploadingPhoto,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = Color(0xFFE8725E)
+                                ),
+                                modifier = Modifier.height(36.dp),
+                                shape = RoundedCornerShape(20.dp)
+                            ) {
+                                if (isUploadingPhoto) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(16.dp),
+                                        color = Color.White,
+                                        strokeWidth = 2.dp
+                                    )
+                                } else {
+                                    Icon(
+                                        Icons.Default.CameraAlt,
+                                        contentDescription = "Add Photo",
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text("Add Photo", fontSize = 12.sp)
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        if (photos.isEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 32.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Icon(
+                                        Icons.Default.PhotoLibrary,
+                                        contentDescription = "No photos",
+                                        modifier = Modifier.size(48.dp),
+                                        tint = Color.Gray
+                                    )
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        "No photos yet. Be the first to add!",
+                                        color = Color.Gray,
+                                        fontSize = 14.sp
+                                    )
+                                }
+                            }
+                        } else {
+                            // Display photos in rows of 3
+                            photos.chunked(3).forEach { rowPhotos ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    rowPhotos.forEach { photoUrl ->
+                                        AsyncImage(
+                                            model = photoUrl,
+                                            contentDescription = "Location photo",
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .aspectRatio(1f)
+                                                .clip(RoundedCornerShape(8.dp)),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    }
+                                    // Add empty spaces if row is not full
+                                    repeat(3 - rowPhotos.size) {
+                                        Spacer(modifier = Modifier.weight(1f))
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-            }
-        }
-
-        if (reviews.isEmpty() && !isLoading) {
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        "No reviews yet. Be the first to review!",
-                        color = Color.Gray,
-                        fontSize = 14.sp
-                    )
-                }
-            }
-        }
-
-        if (reviews.isNotEmpty()) {
-            items(reviews) { review ->
-                ReviewCard(
-                    review = review,
-                    onDeleteClick = { onDeleteReview(review.id) }
-                )
             }
         }
 

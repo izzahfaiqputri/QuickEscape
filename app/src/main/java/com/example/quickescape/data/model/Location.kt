@@ -13,6 +13,7 @@ data class Location(
     val price_start: Int = 0,
     val location: GeoPoint = GeoPoint(0.0, 0.0),
     val image: String = "",
+    val photos: List<String> = emptyList(),
     val reviews: List<Review> = emptyList()
 )
 

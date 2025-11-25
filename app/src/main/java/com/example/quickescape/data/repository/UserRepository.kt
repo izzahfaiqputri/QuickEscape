@@ -50,19 +50,36 @@ class UserRepository(
     suspend fun uploadProfileImage(imageUri: Uri): String? {
         return try {
             val userId = auth.currentUser?.uid ?: return null
-            val fileName = "profile_images/$userId/profile_${System.currentTimeMillis()}.jpg"
+            val timestamp = System.currentTimeMillis()
+            val fileName = "profile_images/$userId/profile_$timestamp.jpg"
             val storageRef = storage.reference.child(fileName)
 
-            // Upload file
-            storageRef.putFile(imageUri).await()
-            Log.d("UserRepository", "File uploaded to: $fileName")
+            Log.d("UserRepository", "=== START PROFILE IMAGE UPLOAD ===")
+            Log.d("UserRepository", "User ID: $userId")
+            Log.d("UserRepository", "Image URI: $imageUri")
+            Log.d("UserRepository", "Storage path: $fileName")
+
+            // Upload file dengan progress tracking
+            val uploadTask = storageRef.putFile(imageUri)
+
+            // Track upload progress
+            uploadTask.addOnProgressListener { taskSnapshot ->
+                val progress = (100.0 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
+                Log.d("UserRepository", "Upload progress: $progress% (${taskSnapshot.bytesTransferred}/${taskSnapshot.totalByteCount} bytes)")
+            }
+
+            uploadTask.await()
+            Log.d("UserRepository", "✓ Upload to Storage SUCCESS!")
 
             // Get download URL
             val downloadUrl = storageRef.downloadUrl.await().toString()
-            Log.d("UserRepository", "Download URL obtained: $downloadUrl")
+            Log.d("UserRepository", "Download URL: $downloadUrl")
+            Log.d("UserRepository", "=== UPLOAD COMPLETE ===")
+
             downloadUrl
         } catch (e: Exception) {
-            Log.e("UserRepository", "Error uploading image: ${e.message}")
+            Log.e("UserRepository", "❌ PROFILE IMAGE UPLOAD FAILED!")
+            Log.e("UserRepository", "Error: ${e.message}", e)
             null
         }
     }

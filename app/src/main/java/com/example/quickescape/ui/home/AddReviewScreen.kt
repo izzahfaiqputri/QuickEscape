@@ -38,59 +38,6 @@ fun AddReviewScreen(
     var comment by remember { mutableStateOf("") }
     var userName by remember { mutableStateOf("") }
     var isSubmitting by remember { mutableStateOf(false) }
-    var selectedPhoto by remember { mutableStateOf<Uri?>(null) }
-    var showPhotoMenu by remember { mutableStateOf(false) }
-
-    // Image picker launchers
-    val galleryLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri ->
-        uri?.let {
-            selectedPhoto = it
-        }
-    }
-
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture()
-    ) { success ->
-        if (success) {
-            // Photo saved successfully, selectedPhoto URI is already set
-        } else {
-            // Camera was cancelled or failed
-            selectedPhoto = null
-        }
-    }
-
-    val context = androidx.compose.ui.platform.LocalContext.current
-
-    // Function to create a temp file for camera
-    fun createImageFile(): java.io.File? {
-        return try {
-            val storageDir = context.cacheDir
-            java.io.File.createTempFile(
-                "JPEG_${System.currentTimeMillis()}_",
-                ".jpg",
-                storageDir
-            )
-        } catch (_: java.io.IOException) {
-            null
-        }
-    }
-
-    // Function to launch camera with permission check
-    fun launchCamera() {
-        val imageFile = createImageFile()
-        if (imageFile != null) {
-            val photoUri = androidx.core.content.FileProvider.getUriForFile(
-                context,
-                "${context.packageName}.fileprovider",
-                imageFile
-            )
-            selectedPhoto = photoUri
-            cameraLauncher.launch(photoUri)
-            showPhotoMenu = false
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -276,88 +223,6 @@ fun AddReviewScreen(
                         .padding(top = 4.dp)
                 )
 
-                // Divider
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 16.dp),
-                    color = Color.LightGray
-                )
-
-                // PHOTO SECTION - SEPARATE
-                Text(
-                    "Add Photo (Optional)",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                )
-
-                if (selectedPhoto != null) {
-                    // Display selected photo
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                    ) {
-                        AsyncImage(
-                            model = selectedPhoto,
-                            contentDescription = "Selected photo",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
-                        IconButton(
-                            onClick = {
-                                selectedPhoto = null
-                            },
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(4.dp)
-                                .size(36.dp)
-                                .background(Color.White, shape = RoundedCornerShape(50))
-                        ) {
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = "Remove",
-                                modifier = Modifier.size(20.dp),
-                                tint = Color.Red
-                            )
-                        }
-                    }
-                } else {
-                    // Empty photo upload area
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(140.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                            .clickable { showPhotoMenu = true },
-                        color = Color(0xFFF5F5F5),
-                        border = androidx.compose.foundation.BorderStroke(
-                            2.dp,
-                            Color.LightGray
-                        )
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Icon(
-                                Icons.Default.PhotoCamera,
-                                contentDescription = "Add Photo",
-                                modifier = Modifier.size(48.dp),
-                                tint = Color.Gray
-                            )
-                            Text(
-                                "Tap to add photo",
-                                fontSize = 14.sp,
-                                color = Color.Gray,
-                                modifier = Modifier.padding(top = 12.dp)
-                            )
-                        }
-                    }
-                }
-
                 // Extra padding at bottom for scroll
                 Spacer(modifier = Modifier.height(80.dp))
             }
@@ -384,8 +249,7 @@ fun AddReviewScreen(
                             userImage = "",
                             photos = emptyList()
                         )
-                        val photoList = if (selectedPhoto != null) listOf(selectedPhoto!!) else emptyList()
-                        onSubmitClick(review, photoList)
+                        onSubmitClick(review, emptyList())
                     }
                 },
                 modifier = Modifier
@@ -400,85 +264,24 @@ fun AddReviewScreen(
             ) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (isSubmitting) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             color = Color.White,
-                            strokeWidth = 3.dp
+                            strokeWidth = 2.dp
                         )
-                        Spacer(modifier = Modifier.width(16.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
                     }
                     Text(
-                        "SUBMIT",
-                        fontSize = 18.sp,
+                        if (isSubmitting) "Submitting..." else "Submit Review",
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                 }
             }
         }
-    }
-
-    // Photo Selection Menu
-    if (showPhotoMenu) {
-        AlertDialog(
-            onDismissRequest = { showPhotoMenu = false },
-            title = { Text("Select Photo Source") },
-            text = {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Button(
-                        onClick = {
-                            galleryLauncher.launch("image/*")
-                            showPhotoMenu = false
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFE8725E)
-                        )
-                    ) {
-                        Icon(
-                            Icons.Default.Image,
-                            contentDescription = "Gallery",
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                        Text("From Gallery")
-                    }
-
-                    Button(
-                        onClick = {
-                            launchCamera()
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFFE8725E)
-                        )
-                    ) {
-                        Icon(
-                            Icons.Default.PhotoCamera,
-                            contentDescription = "Camera",
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                        Text("Take Photo")
-                    }
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = { showPhotoMenu = false },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFE8725E)
-                    )
-                ) {
-                    Text("Cancel")
-                }
-            },
-            dismissButton = null
-        )
     }
 }

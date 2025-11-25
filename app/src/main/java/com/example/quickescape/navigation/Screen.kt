@@ -15,4 +15,7 @@ sealed class Screen(val route: String) {
     object AddReview : Screen("add_review/{locationId}") {
         fun createRoute(locationId: String) = "add_review/$locationId"
     }
+    object Camera : Screen("camera/{locationId}") {
+        fun createRoute(locationId: String) = "camera/$locationId"
+    }
 }
