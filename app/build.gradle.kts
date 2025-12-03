@@ -60,8 +60,14 @@ dependencies {
     // Firebase Authentication with KTX
     implementation(libs.firebase.auth.ktx)
 
+    // Firebase Cloud Messaging
+    implementation("com.google.firebase:firebase-messaging-ktx")
+
     // Google Play Services Auth for Google Sign-In
     implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+    // Google Play Services Location
+    implementation("com.google.android.gms:play-services-location:21.0.1")
 
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.7.5")
@@ -90,6 +96,9 @@ dependencies {
     implementation("androidx.camera:camera-camera2:$camerax_version")
     implementation("androidx.camera:camera-lifecycle:$camerax_version")
     implementation("androidx.camera:camera-view:$camerax_version")
+
+    // Work Manager untuk background location tracking
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
