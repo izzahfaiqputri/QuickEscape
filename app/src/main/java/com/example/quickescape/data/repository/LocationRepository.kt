@@ -234,6 +234,45 @@ class LocationRepository(
         }
     }
 
+    suspend fun getLocationPhotosOptimized(locationId: String): List<String> {
+        return try {
+            android.util.Log.d("LocationRepository", "=== OPTIMIZED PHOTO FETCH ===")
+            android.util.Log.d("LocationRepository", "Location ID: $locationId")
+
+            // Use get() with source preference for faster loading
+            val doc = firestore.collection("locations")
+                .document(locationId)
+                .get(com.google.firebase.firestore.Source.CACHE)
+                .await()
+
+            // If cache miss, fetch from server
+            val finalDoc = if (!doc.exists()) {
+                android.util.Log.d("LocationRepository", "Cache miss, fetching from server...")
+                firestore.collection("locations")
+                    .document(locationId)
+                    .get(com.google.firebase.firestore.Source.SERVER)
+                    .await()
+            } else {
+                android.util.Log.d("LocationRepository", "Cache hit!")
+                doc
+            }
+
+            if (finalDoc.exists()) {
+                @Suppress("UNCHECKED_CAST")
+                val photos = finalDoc.get("photos") as? List<String> ?: emptyList()
+                android.util.Log.d("LocationRepository", "✓ Fast fetch: ${photos.size} photos")
+                photos
+            } else {
+                android.util.Log.e("LocationRepository", "Document not found!")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("LocationRepository", "Optimized fetch failed, fallback to regular: ${e.message}")
+            // Fallback to regular method
+            getLocationPhotos(locationId)
+        }
+    }
+
     suspend fun addLocationPhoto(locationId: String, photoUri: Uri) {
         try {
             android.util.Log.d("LocationRepository", "=== START UPLOAD PHOTO ===")
@@ -271,7 +310,6 @@ class LocationRepository(
             android.util.Log.d("LocationRepository", "Updating Firestore...")
             val docRef = firestore.collection("locations").document(locationId)
 
-            // Gunakan transaction untuk memastikan update berhasil
             firestore.runTransaction { transaction ->
                 val doc = transaction.get(docRef)
 
@@ -302,6 +340,42 @@ class LocationRepository(
             android.util.Log.e("LocationRepository", "Error type: ${e.javaClass.simpleName}")
             android.util.Log.e("LocationRepository", "Error message: ${e.message}")
             android.util.Log.e("LocationRepository", "Stack trace:", e)
+            throw e
+        }
+    }
+
+    suspend fun deleteLocationPhoto(locationId: String, photoUrl: String) {
+        try {
+            android.util.Log.d("LocationRepository", "=== DELETE PHOTO ===")
+            android.util.Log.d("LocationRepository", "Location ID: $locationId")
+            android.util.Log.d("LocationRepository", "Photo URL: $photoUrl")
+
+            // Delete from Firebase Storage first
+            val storageRef = storage.getReferenceFromUrl(photoUrl)
+            storageRef.delete().await()
+            android.util.Log.d("LocationRepository", "✓ Deleted from Storage")
+
+            // Remove from Firestore
+            val docRef = firestore.collection("locations").document(locationId)
+
+            firestore.runTransaction { transaction ->
+                val doc = transaction.get(docRef)
+
+                if (!doc.exists()) {
+                    throw Exception("Location document not found!")
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                val currentPhotos = doc.get("photos") as? List<String> ?: emptyList()
+                val updatedPhotos = currentPhotos.filter { it != photoUrl }
+
+                android.util.Log.d("LocationRepository", "Photos before: ${currentPhotos.size}, after: ${updatedPhotos.size}")
+                transaction.update(docRef, "photos", updatedPhotos)
+            }.await()
+
+            android.util.Log.d("LocationRepository", "✓ Photo deleted successfully")
+        } catch (e: Exception) {
+            android.util.Log.e("LocationRepository", "❌ Delete failed: ${e.message}", e)
             throw e
         }
     }

@@ -153,16 +153,13 @@ class LocationViewModel(private val repository: LocationRepository) : ViewModel(
     fun loadLocationPhotos(locationId: String) {
         viewModelScope.launch {
             try {
-                android.util.Log.d("LocationViewModel", "=== LOADING PHOTOS ===")
+                android.util.Log.d("LocationViewModel", "=== LOADING PHOTOS (OPTIMIZED) ===")
                 android.util.Log.d("LocationViewModel", "Location ID: $locationId")
 
-                val photos = repository.getLocationPhotos(locationId)
+                // Use faster loading with cache
+                val photos = repository.getLocationPhotosOptimized(locationId)
 
                 android.util.Log.d("LocationViewModel", "Photos loaded: ${photos.size} photos")
-                photos.forEachIndexed { index, url ->
-                    android.util.Log.d("LocationViewModel", "Photo $index: $url")
-                }
-
                 _locationPhotos.value = photos
                 android.util.Log.d("LocationViewModel", "✓ Photos state updated")
             } catch (e: Exception) {
@@ -182,12 +179,12 @@ class LocationViewModel(private val repository: LocationRepository) : ViewModel(
                 repository.addLocationPhoto(locationId, photoUri)
                 android.util.Log.d("LocationViewModel", "Upload complete, reloading photos...")
 
-                // Tunggu sebentar sebelum reload untuk memastikan Firestore sudah update
-                kotlinx.coroutines.delay(3000)
+                // Reduced delay for faster feedback
+                kotlinx.coroutines.delay(1000)
 
-                // Reload photos langsung di IO thread
+                // Reload photos langsung di IO thread dengan optimized method
                 android.util.Log.d("LocationViewModel", "=== RELOADING PHOTOS AFTER UPLOAD ===")
-                val photos = repository.getLocationPhotos(locationId)
+                val photos = repository.getLocationPhotosOptimized(locationId)
                 android.util.Log.d("LocationViewModel", "Photos fetched after upload: ${photos.size} photos")
 
                 // Update state di main thread
@@ -202,6 +199,43 @@ class LocationViewModel(private val repository: LocationRepository) : ViewModel(
                     _error.value = "Upload gagal: ${e.message}"
                     _isUploadingPhoto.value = false
                 }
+            }
+        }
+    }
+
+    fun deleteLocationPhoto(locationId: String, photoUrl: String) {
+        viewModelScope.launch {
+            try {
+                android.util.Log.d("LocationViewModel", "=== STARTING DELETE PHOTO ===")
+                android.util.Log.d("LocationViewModel", "Location ID: $locationId")
+                android.util.Log.d("LocationViewModel", "Photo URL to delete: $photoUrl")
+
+                // IMMEDIATE UI UPDATE - Remove photo from UI first for instant feedback
+                val currentPhotos = _locationPhotos.value
+                val updatedPhotosUI = currentPhotos.filter { it != photoUrl }
+                _locationPhotos.value = updatedPhotosUI
+                android.util.Log.d("LocationViewModel", "✅ UI updated immediately - photo removed from display")
+
+                // Now perform actual deletion from Firebase in background
+                try {
+                    repository.deleteLocationPhoto(locationId, photoUrl)
+                    android.util.Log.d("LocationViewModel", "✅ Firebase deletion completed successfully")
+
+                    // Optional: Verify deletion was successful by reloading from server
+                    // But only do this silently without affecting UI since user already sees the result
+
+                } catch (deleteException: Exception) {
+                    android.util.Log.e("LocationViewModel", "❌ Firebase deletion failed: ${deleteException.message}")
+
+                    // If Firebase deletion failed, revert the UI back to original state
+                    _locationPhotos.value = currentPhotos
+                    _error.value = "Failed to delete photo: ${deleteException.message}"
+                    android.util.Log.d("LocationViewModel", "UI reverted due to deletion failure")
+                }
+
+            } catch (e: Exception) {
+                android.util.Log.e("LocationViewModel", "❌ Delete photo operation failed: ${e.message}", e)
+                _error.value = "Failed to delete photo: ${e.message}"
             }
         }
     }

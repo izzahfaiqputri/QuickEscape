@@ -294,6 +294,9 @@ fun NavGraph(
                     onAddPhotoClick = {
                         navController.navigate(Screen.Camera.createRoute(locationId))
                     },
+                    onDeletePhoto = { photoUrl ->
+                        locationViewModel.deleteLocationPhoto(locationId, photoUrl)
+                    },
                     isUploadingPhoto = isUploadingPhoto,
                     foods = foods,
                     onOrderFood = { food, quantity ->

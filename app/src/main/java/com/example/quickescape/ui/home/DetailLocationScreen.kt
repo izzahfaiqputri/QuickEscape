@@ -39,6 +39,7 @@ fun DetailLocationScreen(
     isSaved: Boolean = false,
     photos: List<String> = emptyList(),
     onAddPhotoClick: () -> Unit = {},
+    onDeletePhoto: (String) -> Unit = {}, // Add delete photo functionality
     isUploadingPhoto: Boolean = false,
     foods: List<com.example.quickescape.data.model.Food> = emptyList(),
     onOrderFood: (com.example.quickescape.data.model.Food, Int) -> Unit = { _, _ -> }
@@ -207,10 +208,6 @@ fun DetailLocationScreen(
                     }
                 }
             }
-        }
-
-        item {
-            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
         }
 
         // Tab Row
@@ -392,28 +389,47 @@ fun DetailLocationScreen(
                                 }
                             }
                         } else {
-                            // Display photos in rows of 3
-                            photos.chunked(3).forEach { rowPhotos ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 4.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    rowPhotos.forEach { photoUrl ->
+                            // Display photos in a simple column (no nested LazyColumn)
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                photos.forEach { photoUrl ->
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clip(RoundedCornerShape(8.dp))
+                                            .background(Color(0xFFFAFAFA))
+                                            .clickable { /* TODO: View photo in full screen */ }
+                                    ) {
                                         AsyncImage(
                                             model = photoUrl,
                                             contentDescription = "Location photo",
                                             modifier = Modifier
-                                                .weight(1f)
-                                                .aspectRatio(1f)
-                                                .clip(RoundedCornerShape(8.dp)),
+                                                .fillMaxWidth()
+                                                .height(200.dp),
                                             contentScale = ContentScale.Crop
                                         )
-                                    }
-                                    // Add empty spaces if row is not full
-                                    repeat(3 - rowPhotos.size) {
-                                        Spacer(modifier = Modifier.weight(1f))
+
+                                        // Delete icon
+                                        Surface(
+                                            modifier = Modifier
+                                                .align(Alignment.TopEnd)
+                                                .padding(8.dp)
+                                                .size(24.dp)
+                                                .clip(RoundedCornerShape(50))
+                                                .clickable {
+                                                    onDeletePhoto(photoUrl)
+                                                },
+                                            color = Color.White,
+                                            shadowElevation = 4.dp
+                                        ) {
+                                            Icon(
+                                                Icons.Default.Delete,
+                                                contentDescription = "Delete Photo",
+                                                modifier = Modifier.size(16.dp),
+                                                tint = Color.Red
+                                            )
+                                        }
                                     }
                                 }
                             }
