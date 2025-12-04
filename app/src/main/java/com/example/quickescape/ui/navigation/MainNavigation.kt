@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Explore
-import androidx.compose.material.icons.filled.Mail
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -71,17 +71,17 @@ fun BottomNavigationBar(
             )
         )
 
-        // Messages
+        // Ask AI
         NavigationBarItem(
             icon = {
                 Icon(
-                    imageVector = Icons.Filled.Mail,
-                    contentDescription = "Messages"
+                    imageVector = Icons.Filled.AutoAwesome,
+                    contentDescription = "Ask AI"
                 )
             },
-            label = { Text("Messages", fontSize = 11.sp, fontWeight = FontWeight.Medium) },
-            selected = false,
-            onClick = { /* TODO: Navigate to Messages */ },
+            label = { Text("Ask AI", fontSize = 11.sp, fontWeight = FontWeight.Medium) },
+            selected = currentRoute == Screen.AskAI.route,
+            onClick = { onNavigate(Screen.AskAI.route) },
             colors = NavigationBarItemDefaults.colors(
                 selectedIconColor = Color(0xFFE8725E),
                 selectedTextColor = Color(0xFFE8725E),

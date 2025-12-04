@@ -664,5 +664,9 @@ fun NavGraph(
                 }
             )
         }
+
+        composable(Screen.AskAI.route) {
+            com.example.quickescape.ui.home.AskAIScreen()
+        }
     }
 }
