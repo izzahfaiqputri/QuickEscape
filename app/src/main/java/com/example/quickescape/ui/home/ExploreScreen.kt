@@ -14,9 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.quickescape.data.model.Location
 
 @Composable
@@ -205,12 +207,44 @@ fun NearbyLocationCard(
                     .background(Color(0xFFF5F5F5)),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    Icons.Default.Image,
+                var isLoading by remember { mutableStateOf(true) }
+                var isError by remember { mutableStateOf(false) }
+
+                AsyncImage(
+                    model = location.image,
                     contentDescription = "Location Image",
-                    modifier = Modifier.size(48.dp),
-                    tint = Color.LightGray
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    onLoading = { isLoading = true },
+                    onSuccess = { isLoading = false; isError = false },
+                    onError = { isLoading = false; isError = true }
                 )
+
+                if (isLoading && !isError) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(40.dp),
+                            color = Color(0xFFE8725E)
+                        )
+                    }
+                }
+
+                if (isError) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Default.Image,
+                            contentDescription = "Error",
+                            modifier = Modifier.size(48.dp),
+                            tint = Color.LightGray
+                        )
+                    }
+                }
             }
 
             // Info

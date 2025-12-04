@@ -14,7 +14,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 150000,
             location = GeoPoint(-7.942494, 112.953011),
-            image = "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833855/Gunung_Bromo_bzsrk7.jpg"
         ),
         Location(
             name = "Pantai Kuta",
@@ -25,7 +25,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 10000,
             location = GeoPoint(-8.718447, 115.169186),
-            image = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833861/pantai_kuta_pt61fo.jpg"
         ),
         Location(
             name = "Kawah Ijen",
@@ -36,7 +36,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 50000,
             location = GeoPoint(-8.058331, 114.242416),
-            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833857/Kawah_Ijen_v3b2je.jpg"
         ),
         Location(
             name = "Coban Rondo",
@@ -47,7 +47,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 30000,
             location = GeoPoint(-7.884646, 112.476824),
-            image = "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833857/Coban_Rondo_zfs7ob.jpg"
         ),
         Location(
             name = "Hutan Pinus Umbulrejo",
@@ -58,7 +58,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 10000,
             location = GeoPoint(-8.048098, 112.540332),
-            image = "https://images.unsplash.com/photo-1511497584788-876760111969"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833856/Hutan_Pinus_Umbulrejo_ywbpgj.jpg"
         ),
         Location(
             name = "Pantai Balekambang",
@@ -69,7 +69,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 15000,
             location = GeoPoint(-8.403446, 112.539126),
-            image = "https://images.unsplash.com/photo-1519046904884-53103b34b206"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833859/Pantai_Balekambang_jaubmf.jpg"
         ),
         Location(
             name = "Museum Brawijaya",
@@ -80,7 +80,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 10000,
             location = GeoPoint(-7.971984, 112.621220),
-            image = "https://images.unsplash.com/photo-1528502499754-986f2e4d67c4"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833859/Museum_Brawijaya_myaylw.jpg"
         ),
         Location(
             name = "Sumber Maron",
@@ -91,7 +91,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 15000,
             location = GeoPoint(-8.165610, 112.592033),
-            image = "https://images.unsplash.com/photo-1493558103817-58b2924bce98"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833861/Sumber_Maron_gujcxw.jpg"
         ),
         Location(
             name = "Candi Borobudur",
@@ -102,7 +102,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 50000,
             location = GeoPoint(-7.607874, 110.203751),
-            image = "https://images.unsplash.com/photo-1596402184320-417e7178b2cd"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833855/Candi_Borobudur_cxet3g.jpg"
         ),
         Location(
             name = "Candi Prambanan",
@@ -113,7 +113,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 50000,
             location = GeoPoint(-7.752020, 110.491470),
-            image = "https://images.unsplash.com/photo-1548048026-5a1a941d93d3"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833855/Candi_Prambanan_dikdir.jpg"
         ),
         Location(
             name = "Pantai Parangtritis",
@@ -124,7 +124,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 10000,
             location = GeoPoint(-8.024897, 110.329384),
-            image = "https://images.unsplash.com/photo-1505142468610-359e7d316be0"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833864/Pantai_Parangtritis_gtdnuf.jpg"
         ),
         Location(
             name = "Malioboro",
@@ -135,7 +135,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 0,
             location = GeoPoint(-7.792970, 110.365510),
-            image = "https://images.unsplash.com/photo-1555881788-741bfb4e6d3e"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833858/Malioboro_g2pvhm.jpg"
         ),
         Location(
             name = "Keraton Yogyakarta",
@@ -146,7 +146,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 15000,
             location = GeoPoint(-7.805274, 110.364304),
-            image = "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833858/Keraton_Yogyakarta_xggsxk.jpg"
         ),
         Location(
             name = "Gunung Merapi",
@@ -157,7 +157,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 100000,
             location = GeoPoint(-7.540574, 110.446200),
-            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833856/Gunung_Merapi_dy3gqi.jpg"
         ),
         Location(
             name = "Taman Sari",
@@ -168,7 +168,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 15000,
             location = GeoPoint(-7.809840, 110.359290),
-            image = "https://images.unsplash.com/photo-1548048026-5a1a941d93d3"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833862/Taman_Sari_tvdoyy.jpg"
         ),
         Location(
             name = "Tanah Lot",
@@ -179,7 +179,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 60000,
             location = GeoPoint(-8.621210, 115.086790),
-            image = "https://images.unsplash.com/photo-1537996194471-e657df975ab4"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833862/Tanah_Lot_mf9u9t.jpg"
         ),
         Location(
             name = "Ubud Monkey Forest",
@@ -190,7 +190,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 80000,
             location = GeoPoint(-8.519520, 115.258450),
-            image = "https://images.unsplash.com/photo-1558618666-fcd25c85cd64"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833863/Ubud_Monkey_Forest_geigjp.jpg"
         ),
         Location(
             name = "Tegallalang Rice Terrace",
@@ -201,7 +201,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 20000,
             location = GeoPoint(-8.431130, 115.278170),
-            image = "https://images.unsplash.com/photo-1555400038-63f526cd0ca2"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833863/Tegallalang_Rice_Terrace_atym7p.jpg"
         ),
         Location(
             name = "Uluwatu Temple",
@@ -212,7 +212,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 50000,
             location = GeoPoint(-8.829070, 115.084850),
-            image = "https://images.unsplash.com/photo-1537996994137-e7675fc0d6c0"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833863/Uluwatu_Temple_xv6vmw.jpg"
         ),
         Location(
             name = "Pantai Sanur",
@@ -223,7 +223,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 0,
             location = GeoPoint(-8.689770, 115.263340),
-            image = "https://images.unsplash.com/photo-1506953823976-52e1fdc0149a"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833860/Pantai_Sanur_zwpuv9.jpg"
         ),
         Location(
             name = "Gunung Batur",
@@ -234,7 +234,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 350000,
             location = GeoPoint(-8.242170, 115.375130),
-            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833855/Gunung_Batur_rc9nzo.jpg"
         ),
         Location(
             name = "Nusa Penida",
@@ -245,7 +245,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 200000,
             location = GeoPoint(-8.729260, 115.544900),
-            image = "https://images.unsplash.com/photo-1559827260-dc66d52bef19"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833859/Nusa_Penida_yylpym.jpg"
         ),
         Location(
             name = "Seminyak Beach",
@@ -256,7 +256,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 0,
             location = GeoPoint(-8.691580, 115.167260),
-            image = "https://images.unsplash.com/photo-1559827260-dc66d52bef19"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833861/Seminyak_Beach_q4bgkb.jpg"
         ),
         Location(
             name = "Tirta Empul",
@@ -267,7 +267,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 50000,
             location = GeoPoint(-8.415100, 115.315200),
-            image = "https://images.unsplash.com/photo-1537996994137-e7675fc0d6c0"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833863/Tirta_Empul_ancuef.jpg"
         ),
         Location(
             name = "Tegenungan Waterfall",
@@ -278,7 +278,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 20000,
             location = GeoPoint(-8.576010, 115.288100),
-            image = "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833863/Tegenungan_Waterfal_zgplxo.jpg"
         ),
         Location(
             name = "Pantai Pandawa",
@@ -289,7 +289,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 15000,
             location = GeoPoint(-8.845880, 115.176920),
-            image = "https://images.unsplash.com/photo-1519046904884-53103b34b206"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833860/Pantai_Pandawa_raaote.jpg"
         ),
         Location(
             name = "Monas",
@@ -300,7 +300,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 10000,
             location = GeoPoint(-6.175392, 106.827153),
-            image = "https://images.unsplash.com/photo-1555217851-6141535bd771"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833858/Monas_z8xm9c.jpg"
         ),
         Location(
             name = "Kota Tua Jakarta",
@@ -311,7 +311,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 0,
             location = GeoPoint(-6.135100, 106.813301),
-            image = "https://images.unsplash.com/photo-1548048026-5a1a941d93d3"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833858/Kota_Tua_Jakarta_n2w3dd.jpg"
         ),
         Location(
             name = "Ancol Dreamland",
@@ -322,7 +322,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 25000,
             location = GeoPoint(-6.122840, 106.842507),
-            image = "https://images.unsplash.com/photo-1519046904884-53103b34b206"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833853/Ancol_Dreamland_l4wpjs.jpg"
         ),
         Location(
             name = "Taman Mini Indonesia Indah",
@@ -333,7 +333,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 20000,
             location = GeoPoint(-6.302440, 106.895270),
-            image = "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833862/Taman_Mini_Indonesia_Indah_b3iswg.jpg"
         ),
         Location(
             name = "Kawah Putih",
@@ -344,7 +344,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 50000,
             location = GeoPoint(-7.166230, 107.402420),
-            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833858/Kawah_Putih_cxcyfm.jpg"
         ),
         Location(
             name = "Tangkuban Perahu",
@@ -355,7 +355,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 30000,
             location = GeoPoint(-6.759590, 107.609490),
-            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833862/Tangkuban_Perahu_guojmk.jpg"
         ),
         Location(
             name = "Gedung Sate",
@@ -366,7 +366,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 0,
             location = GeoPoint(-6.902170, 107.618650),
-            image = "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833853/Gedung_Sate_ncu0ze.jpg"
         ),
         Location(
             name = "Farmhouse Lembang",
@@ -377,7 +377,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 30000,
             location = GeoPoint(-6.810600, 107.617900),
-            image = "https://images.unsplash.com/photo-1464207687429-7505649dae38"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833853/Farmhouse_Lembang_cysgvy.jpg"
         ),
         Location(
             name = "Pantai Pangandaran",
@@ -388,7 +388,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 15000,
             location = GeoPoint(-7.683460, 108.648410),
-            image = "https://images.unsplash.com/photo-1505142468610-359e7d316be0"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833859/Pantai_Pangandaran_fejuvg.jpg"
         ),
         Location(
             name = "Green Canyon",
@@ -399,7 +399,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 50000,
             location = GeoPoint(-7.690960, 108.480380),
-            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833855/Green_Canyon_meai9w.jpg"
         ),
         Location(
             name = "Gunung Semeru",
@@ -410,7 +410,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 200000,
             location = GeoPoint(-8.107690, 112.922130),
-            image = "https://images.unsplash.com/photo-1506905925346-21bda4d32df4"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833856/Gunung_Semeru_ionopi.jpg"
         ),
         Location(
             name = "Pulau Sempu",
@@ -421,7 +421,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 100000,
             location = GeoPoint(-8.441400, 112.690200),
-            image = "https://images.unsplash.com/photo-1559827260-dc66d52bef19"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833861/Pulau_Sempu_erkdte.jpg"
         ),
         Location(
             name = "Pantai Klayar",
@@ -432,7 +432,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 10000,
             location = GeoPoint(-8.263350, 111.180230),
-            image = "https://images.unsplash.com/photo-1505142468610-359e7d316be0"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833859/Pantai_Klayar_men6as.jpg"
         ),
         Location(
             name = "Candi Sukuh",
@@ -443,7 +443,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 15000,
             location = GeoPoint(-7.627140, 111.127920),
-            image = "https://images.unsplash.com/photo-1548048026-5a1a941d93d3"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833856/Candi_Sukuh_fdozzu.jpg"
         ),
         Location(
             name = "Taman Safari Prigen",
@@ -454,7 +454,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 100000,
             location = GeoPoint(-7.729920, 112.635560),
-            image = "https://images.unsplash.com/photo-1564760055775-d63b17a55c44"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833862/Taman_Safari_Prigen_auicdz.jpg"
         ),
         Location(
             name = "Pantai Nglambor",
@@ -465,7 +465,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 10000,
             location = GeoPoint(-8.156090, 110.690280),
-            image = "https://images.unsplash.com/photo-1519046904884-53103b34b206"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833860/Pantai_Nglambor_arulzo.jpg"
         ),
         Location(
             name = "Jatim Park 2",
@@ -476,7 +476,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 120000,
             location = GeoPoint(-7.889940, 112.528330),
-            image = "https://images.unsplash.com/photo-1564760055775-d63b17a55c44"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833857/Jatim_Park_2_ijtmmf.jpg"
         ),
         Location(
             name = "Bromo Tengger Semeru",
@@ -487,7 +487,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 250000,
             location = GeoPoint(-7.969000, 112.946000),
-            image = "https://images.unsplash.com/photo-1501785888041-af3ef285b470"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833857/Bromo_Tengger_Semeru_qgso9t.jpg"
         ),
         Location(
             name = "Air Terjun Madakaripura",
@@ -498,7 +498,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 25000,
             location = GeoPoint(-7.943970, 112.987840),
-            image = "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833854/Air_Terjun_Madakaripura_bqkrnr.jpg"
         ),
         Location(
             name = "Jimbaran Beach",
@@ -509,7 +509,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 0,
             location = GeoPoint(-8.761790, 115.166750),
-            image = "https://images.unsplash.com/photo-1505142468610-359e7d316be0"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833857/Jimbaran_Beach_vym2rx.jpg"
         ),
         Location(
             name = "Campuhan Ridge Walk",
@@ -520,7 +520,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 0,
             location = GeoPoint(-8.506190, 115.253710),
-            image = "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833853/Campuhan_Ridge_Walk_mkeyiv.jpg"
         ),
         Location(
             name = "Goa Gajah",
@@ -531,7 +531,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 50000,
             location = GeoPoint(-8.522820, 115.286850),
-            image = "https://images.unsplash.com/photo-1537996994137-e7675fc0d6c0"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833854/Goa_Gajah_qrar5i.jpg"
         ),
         Location(
             name = "Besakih Temple",
@@ -542,7 +542,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 60000,
             location = GeoPoint(-8.374220, 115.451080),
-            image = "https://images.unsplash.com/photo-1537996994137-e7675fc0d6c0"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833854/Besakih_Temple_ngwrrv.jpg"
         ),
         Location(
             name = "Gitgit Waterfall",
@@ -553,8 +553,7 @@ object LocationData {
             ratingCount = 0,
             price_start = 20000,
             location = GeoPoint(-8.257590, 115.140050),
-            image = "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+            image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833854/Gitgit_Waterfall_a0unio.jpg"
         )
     )
 }
-
