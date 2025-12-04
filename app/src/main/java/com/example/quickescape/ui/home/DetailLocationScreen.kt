@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.quickescape.data.model.Location
 import com.example.quickescape.data.model.Review
+import com.example.quickescape.ui.components.GoToLocationTab
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -39,14 +40,14 @@ fun DetailLocationScreen(
     isSaved: Boolean = false,
     photos: List<String> = emptyList(),
     onAddPhotoClick: () -> Unit = {},
-    onDeletePhoto: (String) -> Unit = {}, // Add delete photo functionality
+    onDeletePhoto: (String) -> Unit = {},
     isUploadingPhoto: Boolean = false,
     foods: List<com.example.quickescape.data.model.Food> = emptyList(),
     onOrderFood: (com.example.quickescape.data.model.Food, Int) -> Unit = { _, _ -> }
 ) {
     var saved by remember { mutableStateOf(isSaved) }
     var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("Reviews", "Photos", "Food")
+    val tabs = listOf("Reviews", "Photos", "Food", "Go to Location")
 
     LazyColumn(
         modifier = Modifier
@@ -478,6 +479,16 @@ fun DetailLocationScreen(
                             }
                         }
                     }
+                }
+            }
+            3 -> { // Go to Location
+                item {
+                    GoToLocationTab(
+                        location = location,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    )
                 }
             }
         }
