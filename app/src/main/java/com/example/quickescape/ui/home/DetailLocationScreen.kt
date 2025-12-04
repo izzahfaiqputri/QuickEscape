@@ -39,11 +39,13 @@ fun DetailLocationScreen(
     isSaved: Boolean = false,
     photos: List<String> = emptyList(),
     onAddPhotoClick: () -> Unit = {},
-    isUploadingPhoto: Boolean = false
+    isUploadingPhoto: Boolean = false,
+    foods: List<com.example.quickescape.data.model.Food> = emptyList(),
+    onOrderFood: (com.example.quickescape.data.model.Food, Int) -> Unit = { _, _ -> }
 ) {
     var saved by remember { mutableStateOf(isSaved) }
     var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("Reviews", "Photos")
+    val tabs = listOf("Reviews", "Photos", "Food")
 
     LazyColumn(
         modifier = Modifier
@@ -419,6 +421,49 @@ fun DetailLocationScreen(
                     }
                 }
             }
+            2 -> { // Food
+                item {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            "Food & Beverages",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        if (foods.isEmpty()) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 32.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    "No food available for this location.",
+                                    color = Color.Gray,
+                                    fontSize = 14.sp
+                                )
+                            }
+                        } else {
+                            // Use forEach instead of items() since we're inside an item {} block
+                            foods.forEach { food ->
+                                FoodItem(
+                                    food = food,
+                                    onOrderClick = { quantity ->
+                                        onOrderFood(food, quantity)
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         item {
@@ -558,6 +603,141 @@ fun ReviewCard(
                             contentScale = ContentScale.Crop
                         )
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun FoodItem(
+    food: com.example.quickescape.data.model.Food,
+    onOrderClick: (Int) -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clip(RoundedCornerShape(12.dp)),
+        color = Color(0xFFFAFAFA),
+        shadowElevation = 1.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = food.image,
+                contentDescription = food.name,
+                modifier = Modifier
+                    .size(80.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = food.name,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    maxLines = 2,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    text = "Rp ${String.format("%,d", food.price)}",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFE8725E)
+                )
+
+                Text(
+                    text = food.description,
+                    fontSize = 12.sp,
+                    color = Color.Gray,
+                    maxLines = 2,
+                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                var quantity by remember { mutableStateOf(1) }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    IconButton(
+                        onClick = {
+                            if (quantity > 1) {
+                                quantity--
+                            }
+                        },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Remove,
+                            contentDescription = "Decrease",
+                            modifier = Modifier.size(16.dp),
+                            tint = Color.Gray
+                        )
+                    }
+
+                    Text(
+                        text = quantity.toString(),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
+                        modifier = Modifier.width(24.dp),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+
+                    IconButton(
+                        onClick = {
+                            quantity++
+                        },
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = "Increase",
+                            modifier = Modifier.size(16.dp),
+                            tint = Color.Gray
+                        )
+                    }
+                }
+
+                Button(
+                    onClick = { onOrderClick(quantity) },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFE8725E)
+                    ),
+                    modifier = Modifier
+                        .height(36.dp)
+                        .widthIn(min = 80.dp),
+                    shape = RoundedCornerShape(20.dp)
+                ) {
+                    Icon(
+                        Icons.Default.AddShoppingCart,
+                        contentDescription = "Order",
+                        modifier = Modifier.size(14.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Order", fontSize = 11.sp)
                 }
             }
         }

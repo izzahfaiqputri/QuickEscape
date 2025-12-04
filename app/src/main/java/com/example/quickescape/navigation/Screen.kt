@@ -18,4 +18,10 @@ sealed class Screen(val route: String) {
     object Camera : Screen("camera/{locationId}") {
         fun createRoute(locationId: String) = "camera/$locationId"
     }
+    object OrderForm : Screen("order_form/{locationId}/{foodId}") {
+        fun createRoute(locationId: String, foodId: String) = "order_form/$locationId/$foodId"
+    }
+    object Invoice : Screen("invoice/{orderId}") {
+        fun createRoute(orderId: String) = "invoice/$orderId"
+    }
 }
