@@ -6,6 +6,7 @@ import com.google.firebase.firestore.GeoPoint
 object LocationData {
     val locations = listOf(
         Location(
+            id = "gunung_bromo",
             name = "Gunung Bromo",
             island = "Jawa",
             city = "Probolinggo",
@@ -17,6 +18,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833855/Gunung_Bromo_bzsrk7.jpg"
         ),
         Location(
+            id = "pantai_kuta",
             name = "Pantai Kuta",
             island = "Bali",
             city = "Badung",
@@ -28,6 +30,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833861/pantai_kuta_pt61fo.jpg"
         ),
         Location(
+            id = "kawah_ijen",
             name = "Kawah Ijen",
             island = "Jawa",
             city = "Banyuwangi",
@@ -39,6 +42,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833857/Kawah_Ijen_v3b2je.jpg"
         ),
         Location(
+            id = "coban_rondo",
             name = "Coban Rondo",
             island = "Jawa",
             city = "Malang",
@@ -50,6 +54,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833857/Coban_Rondo_zfs7ob.jpg"
         ),
         Location(
+            id = "hutan_pinus_umbulrejo",
             name = "Hutan Pinus Umbulrejo",
             island = "Jawa",
             city = "Malang",
@@ -61,6 +66,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833856/Hutan_Pinus_Umbulrejo_ywbpgj.jpg"
         ),
         Location(
+            id = "pantai_balekambang",
             name = "Pantai Balekambang",
             island = "Jawa",
             city = "Malang",
@@ -72,6 +78,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833859/Pantai_Balekambang_jaubmf.jpg"
         ),
         Location(
+            id = "museum_brawijaya",
             name = "Museum Brawijaya",
             island = "Jawa",
             city = "Malang",
@@ -83,6 +90,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833859/Museum_Brawijaya_myaylw.jpg"
         ),
         Location(
+            id = "sumber_maron",
             name = "Sumber Maron",
             island = "Jawa",
             city = "Malang",
@@ -94,6 +102,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833861/Sumber_Maron_gujcxw.jpg"
         ),
         Location(
+            id = "candi_borobudur",
             name = "Candi Borobudur",
             island = "Jawa",
             city = "Magelang",
@@ -105,6 +114,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833855/Candi_Borobudur_cxet3g.jpg"
         ),
         Location(
+            id = "candi_prambanan",
             name = "Candi Prambanan",
             island = "Jawa",
             city = "Sleman",
@@ -116,6 +126,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833855/Candi_Prambanan_dikdir.jpg"
         ),
         Location(
+            id = "pantai_parangtritis",
             name = "Pantai Parangtritis",
             island = "Jawa",
             city = "Bantul",
@@ -127,6 +138,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833864/Pantai_Parangtritis_gtdnuf.jpg"
         ),
         Location(
+            id = "malioboro",
             name = "Malioboro",
             island = "Jawa",
             city = "Yogyakarta",
@@ -138,6 +150,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833858/Malioboro_g2pvhm.jpg"
         ),
         Location(
+            id = "keraton_yogyakarta",
             name = "Keraton Yogyakarta",
             island = "Jawa",
             city = "Yogyakarta",
@@ -149,6 +162,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833858/Keraton_Yogyakarta_xggsxk.jpg"
         ),
         Location(
+            id = "gunung_merapi",
             name = "Gunung Merapi",
             island = "Jawa",
             city = "Sleman",
@@ -160,6 +174,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833856/Gunung_Merapi_dy3gqi.jpg"
         ),
         Location(
+            id = "taman_sari",
             name = "Taman Sari",
             island = "Jawa",
             city = "Yogyakarta",
@@ -171,6 +186,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833862/Taman_Sari_tvdoyy.jpg"
         ),
         Location(
+            id = "tanah_lot",
             name = "Tanah Lot",
             island = "Bali",
             city = "Tabanan",
@@ -182,6 +198,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833862/Tanah_Lot_mf9u9t.jpg"
         ),
         Location(
+            id = "ubud_monkey_forest",
             name = "Ubud Monkey Forest",
             island = "Bali",
             city = "Gianyar",
@@ -193,6 +210,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833863/Ubud_Monkey_Forest_geigjp.jpg"
         ),
         Location(
+            id = "tegallalang_rice_terrace",
             name = "Tegallalang Rice Terrace",
             island = "Bali",
             city = "Gianyar",
@@ -204,6 +222,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833863/Tegallalang_Rice_Terrace_atym7p.jpg"
         ),
         Location(
+            id = "uluwatu_temple",
             name = "Uluwatu Temple",
             island = "Bali",
             city = "Badung",
@@ -215,6 +234,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833863/Uluwatu_Temple_xv6vmw.jpg"
         ),
         Location(
+            id = "pantai_sanur",
             name = "Pantai Sanur",
             island = "Bali",
             city = "Denpasar",
@@ -226,6 +246,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833860/Pantai_Sanur_zwpuv9.jpg"
         ),
         Location(
+            id = "gunung_batur",
             name = "Gunung Batur",
             island = "Bali",
             city = "Bangli",
@@ -237,6 +258,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833855/Gunung_Batur_rc9nzo.jpg"
         ),
         Location(
+            id = "nusa_penida",
             name = "Nusa Penida",
             island = "Bali",
             city = "Klungkung",
@@ -248,6 +270,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833859/Nusa_Penida_yylpym.jpg"
         ),
         Location(
+            id = "seminyak_beach",
             name = "Seminyak Beach",
             island = "Bali",
             city = "Badung",
@@ -259,6 +282,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833861/Seminyak_Beach_q4bgkb.jpg"
         ),
         Location(
+            id = "tirta_empul",
             name = "Tirta Empul",
             island = "Bali",
             city = "Gianyar",
@@ -270,6 +294,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833863/Tirta_Empul_ancuef.jpg"
         ),
         Location(
+            id = "tegenungan_waterfall",
             name = "Tegenungan Waterfall",
             island = "Bali",
             city = "Gianyar",
@@ -281,6 +306,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833863/Tegenungan_Waterfal_zgplxo.jpg"
         ),
         Location(
+            id = "pantai_pandawa",
             name = "Pantai Pandawa",
             island = "Bali",
             city = "Badung",
@@ -292,6 +318,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833860/Pantai_Pandawa_raaote.jpg"
         ),
         Location(
+            id = "monas",
             name = "Monas",
             island = "Jawa",
             city = "Jakarta",
@@ -303,6 +330,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833858/Monas_z8xm9c.jpg"
         ),
         Location(
+            id = "kota_tua_jakarta",
             name = "Kota Tua Jakarta",
             island = "Jawa",
             city = "Jakarta",
@@ -314,6 +342,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833858/Kota_Tua_Jakarta_n2w3dd.jpg"
         ),
         Location(
+            id = "ancol_dreamland",
             name = "Ancol Dreamland",
             island = "Jawa",
             city = "Jakarta",
@@ -325,6 +354,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833853/Ancol_Dreamland_l4wpjs.jpg"
         ),
         Location(
+            id = "taman_mini_indonesia_indah",
             name = "Taman Mini Indonesia Indah",
             island = "Jawa",
             city = "Jakarta",
@@ -336,6 +366,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833862/Taman_Mini_Indonesia_Indah_b3iswg.jpg"
         ),
         Location(
+            id = "kawah_putih",
             name = "Kawah Putih",
             island = "Jawa",
             city = "Bandung",
@@ -347,6 +378,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833858/Kawah_Putih_cxcyfm.jpg"
         ),
         Location(
+            id = "tangkuban_perahu",
             name = "Tangkuban Perahu",
             island = "Jawa",
             city = "Bandung",
@@ -358,6 +390,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833862/Tangkuban_Perahu_guojmk.jpg"
         ),
         Location(
+            id = "gedung_sate",
             name = "Gedung Sate",
             island = "Jawa",
             city = "Bandung",
@@ -369,6 +402,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833853/Gedung_Sate_ncu0ze.jpg"
         ),
         Location(
+            id = "farmhouse_lembang",
             name = "Farmhouse Lembang",
             island = "Jawa",
             city = "Bandung",
@@ -380,6 +414,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833853/Farmhouse_Lembang_cysgvy.jpg"
         ),
         Location(
+            id = "pantai_pangandaran",
             name = "Pantai Pangandaran",
             island = "Jawa",
             city = "Pangandaran",
@@ -391,6 +426,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833859/Pantai_Pangandaran_fejuvg.jpg"
         ),
         Location(
+            id = "green_canyon",
             name = "Green Canyon",
             island = "Jawa",
             city = "Pangandaran",
@@ -402,6 +438,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833855/Green_Canyon_meai9w.jpg"
         ),
         Location(
+            id = "gunung_semeru",
             name = "Gunung Semeru",
             island = "Jawa",
             city = "Lumajang",
@@ -413,6 +450,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833856/Gunung_Semeru_ionopi.jpg"
         ),
         Location(
+            id = "pulau_sempu",
             name = "Pulau Sempu",
             island = "Jawa",
             city = "Malang",
@@ -424,6 +462,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833861/Pulau_Sempu_erkdte.jpg"
         ),
         Location(
+            id = "pantai_klayar",
             name = "Pantai Klayar",
             island = "Jawa",
             city = "Pacitan",
@@ -435,6 +474,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833859/Pantai_Klayar_men6as.jpg"
         ),
         Location(
+            id = "candi_sukuh",
             name = "Candi Sukuh",
             island = "Jawa",
             city = "Karanganyar",
@@ -446,6 +486,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833856/Candi_Sukuh_fdozzu.jpg"
         ),
         Location(
+            id = "taman_safari_prigen",
             name = "Taman Safari Prigen",
             island = "Jawa",
             city = "Pasuruan",
@@ -457,6 +498,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833862/Taman_Safari_Prigen_auicdz.jpg"
         ),
         Location(
+            id = "pantai_nglambor",
             name = "Pantai Nglambor",
             island = "Jawa",
             city = "Gunungkidul",
@@ -468,6 +510,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833860/Pantai_Nglambor_arulzo.jpg"
         ),
         Location(
+            id = "jatim_park_2",
             name = "Jatim Park 2",
             island = "Jawa",
             city = "Batu",
@@ -479,6 +522,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833857/Jatim_Park_2_ijtmmf.jpg"
         ),
         Location(
+            id = "bromo_tengger_semeru",
             name = "Bromo Tengger Semeru",
             island = "Jawa",
             city = "Probolinggo",
@@ -490,6 +534,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833857/Bromo_Tengger_Semeru_qgso9t.jpg"
         ),
         Location(
+            id = "air_terjun_madakaripura",
             name = "Air Terjun Madakaripura",
             island = "Jawa",
             city = "Probolinggo",
@@ -501,6 +546,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833854/Air_Terjun_Madakaripura_bqkrnr.jpg"
         ),
         Location(
+            id = "jimbaran_beach",
             name = "Jimbaran Beach",
             island = "Bali",
             city = "Badung",
@@ -512,6 +558,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833857/Jimbaran_Beach_vym2rx.jpg"
         ),
         Location(
+            id = "campuhan_ridge_walk",
             name = "Campuhan Ridge Walk",
             island = "Bali",
             city = "Gianyar",
@@ -523,6 +570,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833853/Campuhan_Ridge_Walk_mkeyiv.jpg"
         ),
         Location(
+            id = "goa_gajah",
             name = "Goa Gajah",
             island = "Bali",
             city = "Gianyar",
@@ -534,6 +582,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833854/Goa_Gajah_qrar5i.jpg"
         ),
         Location(
+            id = "besakih_temple",
             name = "Besakih Temple",
             island = "Bali",
             city = "Karangasem",
@@ -545,6 +594,7 @@ object LocationData {
             image = "https://res.cloudinary.com/dwl82bdtv/image/upload/v1764833854/Besakih_Temple_ngwrrv.jpg"
         ),
         Location(
+            id = "gitgit_waterfall",
             name = "Gitgit Waterfall",
             island = "Bali",
             city = "Buleleng",

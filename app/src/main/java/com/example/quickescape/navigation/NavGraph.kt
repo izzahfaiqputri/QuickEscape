@@ -25,11 +25,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.launch
 import androidx.compose.ui.Modifier
+import android.util.Log
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    startDestination: String = Screen.Onboarding.route,
+    startDestination: String,
     modifier: Modifier = Modifier
 ) {
     NavHost(
@@ -189,8 +190,10 @@ fun NavGraph(
             val firestore = FirebaseFirestore.getInstance()
             val storage = FirebaseStorage.getInstance()
             val auth = FirebaseAuth.getInstance()
+            val context = androidx.compose.ui.platform.LocalContext.current
             val locationRepository = LocationRepository(firestore, storage)
             val userRepository = com.example.quickescape.data.repository.UserRepository(firestore, storage, auth)
+            val foodRepository = com.example.quickescape.repository.FoodRepository(context)
 
             val locationViewModel: LocationViewModel = viewModel(
                 factory = object : androidx.lifecycle.ViewModelProvider.Factory {
@@ -215,6 +218,40 @@ fun NavGraph(
             val locationPhotos by locationViewModel.locationPhotos.collectAsState()
             val isUploadingPhoto by locationViewModel.isUploadingPhoto.collectAsState()
 
+            // State to hold foods for this location
+            var foods by remember { mutableStateOf<List<com.example.quickescape.data.model.Food>>(emptyList()) }
+            var isFoodsLoading by remember { mutableStateOf(true) }
+
+            val coroutineScope = rememberCoroutineScope()
+
+            // Load foods when locationId changes
+            LaunchedEffect(locationId) {
+                Log.d("NavGraph", "=== LOCATION DEBUG ===")
+                Log.d("NavGraph", "Current locationId from navigation: '$locationId'")
+                Log.d("NavGraph", "LocationId length: ${locationId.length}")
+                Log.d("NavGraph", "LocationId isEmpty: ${locationId.isEmpty()}")
+
+                if (selectedLocation != null) {
+                    Log.d("NavGraph", "Selected location name: '${selectedLocation!!.name}'")
+                    Log.d("NavGraph", "Selected location.id: '${selectedLocation!!.id}'")
+                } else {
+                    Log.d("NavGraph", "Selected location is NULL")
+                }
+
+                isFoodsLoading = true
+                try {
+                    val result = foodRepository.getFoodsByLocationId(locationId)
+                    foods = result
+                    Log.d("NavGraph", "FoodRepository returned ${result.size} foods")
+                    Log.d("NavGraph", "====================")
+                } catch (e: Exception) {
+                    Log.e("NavGraph", "Error loading foods: ${e.message}")
+                    foods = emptyList()
+                } finally {
+                    isFoodsLoading = false
+                }
+            }
+
             // Reload photos setiap kali screen ini di-compose (termasuk saat kembali dari Camera)
             LaunchedEffect(locationId) {
                 locationViewModel.loadLocationById(locationId)
@@ -222,7 +259,7 @@ fun NavGraph(
                 userViewModel.loadUserProfile()
             }
 
-            // Juga reload photos saat navBackStackEntry berubah (kembali dari Camera)
+            // reload photos saat navBackStackEntry berubah (kembali dari Camera)
             val navBackStackEntry = navController.currentBackStackEntry
             LaunchedEffect(navBackStackEntry) {
                 locationViewModel.loadLocationPhotos(locationId)
@@ -257,7 +294,12 @@ fun NavGraph(
                     onAddPhotoClick = {
                         navController.navigate(Screen.Camera.createRoute(locationId))
                     },
-                    isUploadingPhoto = isUploadingPhoto
+                    isUploadingPhoto = isUploadingPhoto,
+                    foods = foods,
+                    onOrderFood = { food, quantity ->
+                        // Navigate to order form instead of direct payment
+                        navController.navigate(Screen.OrderForm.createRoute(locationId, food.id))
+                    }
                 )
             }
         }
@@ -416,6 +458,149 @@ fun NavGraph(
                     }
                 }
             )
+        }
+
+        composable(
+            Screen.OrderForm.route,
+            arguments = listOf(
+                navArgument("locationId") { type = NavType.StringType },
+                navArgument("foodId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val locationId = backStackEntry.arguments?.getString("locationId") ?: ""
+            val foodId = backStackEntry.arguments?.getString("foodId") ?: ""
+            val context = androidx.compose.ui.platform.LocalContext.current
+            val foodRepository = com.example.quickescape.repository.FoodRepository(context)
+
+            val orderViewModel: com.example.quickescape.data.viewmodel.OrderViewModel = viewModel(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        return com.example.quickescape.data.viewmodel.OrderViewModel(foodRepository) as T
+                    }
+                }
+            )
+
+            // Find the food from FoodData
+            val food = com.example.quickescape.data.FoodData.foods.find { it.id == foodId }
+            val currentOrder by orderViewModel.currentOrder.collectAsState()
+            val currentInvoice by orderViewModel.currentInvoice.collectAsState()
+            val isLoading by orderViewModel.isLoading.collectAsState()
+            val errorMessage by orderViewModel.errorMessage.collectAsState()
+
+            // Handle error messages and navigation
+            errorMessage?.let { error ->
+                LaunchedEffect(error) {
+                    when {
+                        error == "payment_api_offline" -> {
+                            // Payment API is offline, navigate directly to invoice
+                            android.widget.Toast.makeText(
+                                context,
+                                "Payment server unavailable. Showing order confirmation.",
+                                android.widget.Toast.LENGTH_LONG
+                            ).show()
+
+                            // Navigate to invoice with current order ID
+                            currentOrder?.let { order ->
+                                navController.navigate(Screen.Invoice.createRoute(order.orderId)) {
+                                    popUpTo(Screen.DetailLocation.route) {
+                                        inclusive = false
+                                    }
+                                }
+                            }
+                            orderViewModel.clearError()
+                        }
+                        error.startsWith("error_") -> {
+                            // Other errors
+                            val errorMsg = error.removePrefix("error_")
+                            android.widget.Toast.makeText(
+                                context,
+                                "Error: $errorMsg",
+                                android.widget.Toast.LENGTH_LONG
+                            ).show()
+                            orderViewModel.clearError()
+                        }
+                        else -> {
+                            android.widget.Toast.makeText(
+                                context,
+                                error,
+                                android.widget.Toast.LENGTH_LONG
+                            ).show()
+                            orderViewModel.clearError()
+                        }
+                    }
+                }
+            }
+
+            // Navigate to payment when order is created successfully
+            LaunchedEffect(currentOrder) {
+                currentOrder?.let { order ->
+                    if (order.status == "pending" && order.paymentUrl.isNotEmpty()) {
+                        android.widget.Toast.makeText(
+                            context,
+                            "Redirecting to payment...",
+                            android.widget.Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+
+            if (food != null) {
+                com.example.quickescape.ui.order.OrderFormScreen(
+                    food = food,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onOrderSubmit = { customerName, phoneNumber, quantity ->
+                        orderViewModel.createOrder(food, customerName, phoneNumber, quantity)
+                    }
+                )
+            } else {
+                // Handle food not found
+                LaunchedEffect(Unit) {
+                    android.widget.Toast.makeText(context, "Food not found", android.widget.Toast.LENGTH_SHORT).show()
+                    navController.popBackStack()
+                }
+            }
+        }
+
+        composable(
+            Screen.Invoice.route,
+            arguments = listOf(
+                navArgument("orderId") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val orderId = backStackEntry.arguments?.getString("orderId") ?: ""
+            val context = androidx.compose.ui.platform.LocalContext.current
+            val foodRepository = com.example.quickescape.repository.FoodRepository(context)
+
+            val orderViewModel: com.example.quickescape.data.viewmodel.OrderViewModel = viewModel(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        return com.example.quickescape.data.viewmodel.OrderViewModel(foodRepository) as T
+                    }
+                }
+            )
+
+            val currentInvoice by orderViewModel.currentInvoice.collectAsState()
+
+            // Simulate payment success when this screen loads
+            LaunchedEffect(orderId) {
+                orderViewModel.handlePaymentSuccess(orderId, "OVO")
+            }
+
+            currentInvoice?.let { invoice ->
+                com.example.quickescape.ui.order.InvoiceScreen(
+                    invoice = invoice,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    onDoneClick = {
+                        // Navigate back to detail location and clear the order
+                        orderViewModel.clearOrder()
+                        navController.popBackStack(Screen.DetailLocation.route, false)
+                    }
+                )
+            }
         }
 
         composable(Screen.Profile.route) {

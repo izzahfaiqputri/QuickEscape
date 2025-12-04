@@ -1,6 +1,7 @@
 package com.example.quickescape
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -83,7 +84,8 @@ class MainActivity : ComponentActivity() {
                         // NavGraph content
                         NavGraph(
                             navController = navController,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            startDestination = determineStartDestination()
                         )
 
                         // Bottom Navigation
@@ -108,22 +110,84 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }
+
+                    // Handle deep link dari Intent
+                    androidx.compose.runtime.LaunchedEffect(intent.data) {
+                        handleDeepLink(navController, intent)
+                    }
                 }
             }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        // Check if we need to navigate to a specific location (from notification)
-        intent?.extras?.let { extras ->
-            val shouldNavigate = extras.getBoolean("navigate_to_detail", false)
-            val locationId = extras.getString("locationId")
+    private fun handleDeepLink(navController: androidx.navigation.NavController, intentData: Intent) {
+        val data = intentData.data
 
-            if (shouldNavigate && locationId != null) {
-                Log.d(TAG, "Navigating to location: $locationId")
-                // Navigation will be handled by the NavGraph
+        Log.d(TAG, "Checking deep link: scheme=${data?.scheme}, host=${data?.host}")
+
+        if (data != null && data.scheme == "quickescape" && data.host == "payment") {
+            val orderId = data.getQueryParameter("orderId")
+            val status = data.getQueryParameter("status") // "success" or "failed"
+
+            Log.d(TAG, "✅ Payment callback received!")
+            Log.d(TAG, "Order ID: $orderId")
+            Log.d(TAG, "Status: $status")
+
+            if (!orderId.isNullOrEmpty() && status == "success") {
+                // Payment berhasil - Navigate to invoice screen
+                Log.d(TAG, "Navigating to invoice screen for order: $orderId")
+
+                // Delay sedikit untuk memastikan NavController sudah siap
+                android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+                    navController.navigate(Screen.Invoice.createRoute(orderId)) {
+                        // Clear back stack to prevent going back to payment
+                        popUpTo(Screen.Home.route) {
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                    }
+
+                    // Show success message
+                    android.widget.Toast.makeText(
+                        this,
+                        "Payment successful! Loading invoice...",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                }, 500)
+            } else {
+                // Payment failed
+                Log.e(TAG, "Payment failed or cancelled")
+                android.widget.Toast.makeText(
+                    this,
+                    "Payment ${status ?: "cancelled"}. Please try again.",
+                    android.widget.Toast.LENGTH_LONG
+                ).show()
+
+                navController.navigate(Screen.Home.route) {
+                    popUpTo(Screen.Home.route) {
+                        inclusive = true
+                    }
+                }
             }
+        } else {
+            Log.d(TAG, "No payment deep link found in intent")
+        }
+    }
+
+    private fun determineStartDestination(): String {
+        // Always start from onboarding regardless of authentication status
+        return Screen.Onboarding.route
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+
+        // Handle deep link when app is already running
+        val data = intent.data
+        if (data != null && data.scheme == "quickescape" && data.host == "payment") {
+            Log.d(TAG, "New intent received with payment callback")
+            recreate() // Recreate activity to trigger deep link handling
         }
     }
 
