@@ -84,7 +84,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
 
                     if (updateSuccess) {
                         _userProfile.value = updatedProfile
-                        // Refresh profile dari Firestore untuk memastikan konsistensi
+                        // Refresh profile
                         loadUserProfile()
                         Log.d("UserViewModel", "Profile info updated successfully")
                     } else {
@@ -107,7 +107,7 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
                 Log.d("UserViewModel", "Adding saved location: $locationId")
                 val success = repository.addSavedLocation(locationId)
                 if (success) {
-                    // Refresh profile untuk update savedLocations list
+                    // Refresh savedLocations list
                     loadUserProfile()
                     Log.d("UserViewModel", "Location saved successfully")
                 } else {
@@ -127,9 +127,14 @@ class UserViewModel(private val repository: UserRepository) : ViewModel() {
                 Log.d("UserViewModel", "Removing saved location: $locationId")
                 val success = repository.removeSavedLocation(locationId)
                 if (success) {
-                    // Refresh profile untuk update savedLocations list
+                    // Immediately update the savedLocations list by removing the item
+                    val currentSavedLocations = _savedLocations.value
+                    val updatedSavedLocations = currentSavedLocations.filter { it.id != locationId }
+                    _savedLocations.value = updatedSavedLocations
+
+                    // Also refresh profile untuk update savedLocations list in UserProfile
                     loadUserProfile()
-                    Log.d("UserViewModel", "Location removed successfully")
+                    Log.d("UserViewModel", "Location removed successfully and UI updated immediately")
                 } else {
                     _error.value = "Failed to remove location"
                     Log.e("UserViewModel", "removeSavedLocation returned false")
