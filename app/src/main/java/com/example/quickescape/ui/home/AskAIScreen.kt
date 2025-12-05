@@ -1,14 +1,15 @@
 package com.example.quickescape.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
@@ -16,23 +17,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import com.example.quickescape.data.model.Location
 import com.example.quickescape.data.viewmodel.TravelAIViewModel
 
-/**
- * Screen untuk Ask AI - Travel Assistant
- * Memungkinkan user untuk bertanya tentang travel destinations
- */
 @Composable
 fun AskAIScreen(
-    viewModel: TravelAIViewModel = viewModel()
+    viewModel: TravelAIViewModel,
+    onLocationClick: (Location) -> Unit = {}
 ) {
-    val aiResponse by viewModel.aiResponse.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val errorMessage by viewModel.errorMessage.collectAsState()
     val conversationHistory by viewModel.conversationHistory.collectAsState()
@@ -73,10 +72,12 @@ fun AskAIScreen(
 
             // Show conversation history (includes both user and assistant messages)
             items(conversationHistory) { message ->
-                ChatBubble(message = message)
+                ChatBubble(
+                    message = message,
+                    onLocationClick = onLocationClick
+                )
             }
 
-            // Show loading indicator
             if (isLoading) {
                 item {
                     Box(
@@ -85,10 +86,20 @@ fun AskAIScreen(
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(32.dp),
-                            color = Color(0xFFE8725E)
-                        )
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(32.dp),
+                                color = Color(0xFFE8725E)
+                            )
+                            Text(
+                                "Searching destinations...",
+                                fontSize = 12.sp,
+                                color = Color.Gray,
+                                modifier = Modifier.padding(top = 8.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -150,7 +161,7 @@ private fun AskAIHeader(
                 )
             }
             Text(
-                "Ask anything about travel destinations",
+                "Ask about nearby places, best ratings & more",
                 fontSize = 11.sp,
                 color = Color.Gray,
                 modifier = Modifier.padding(start = 30.dp, top = 2.dp),
@@ -175,19 +186,21 @@ private fun AskAIHeader(
 
 @Composable
 private fun ChatBubble(
-    message: TravelAIViewModel.ChatMessage
+    message: TravelAIViewModel.ChatMessage,
+    onLocationClick: (Location) -> Unit
 ) {
     val isUser = message.role == "user"
 
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
+        horizontalAlignment = if (isUser) Alignment.End else Alignment.Start
     ) {
+        // Message bubble
         Surface(
             modifier = Modifier
-                .widthIn(max = 280.dp)
+                .widthIn(max = if (isUser) 280.dp else 320.dp)
                 .clip(RoundedCornerShape(12.dp)),
             color = if (isUser) Color(0xFFE8725E) else Color(0xFFF0F0F0),
             shadowElevation = 1.dp
@@ -208,6 +221,182 @@ private fun ChatBubble(
                     color = if (isUser) Color.White.copy(alpha = 0.7f) else Color.Gray,
                     textAlign = TextAlign.End,
                     modifier = Modifier.align(Alignment.End)
+                )
+            }
+        }
+
+        // Show location cards if assistant message has locations
+        if (!isUser && message.locations.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    Icons.Default.LocationOn,
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                    tint = Color(0xFFE8725E)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    "Found ${message.locations.size} destinations (tap to view):",
+                    fontSize = 11.sp,
+                    color = Color.Gray,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Horizontal scrollable location cards
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(end = 8.dp)
+            ) {
+                items(message.locations) { locationWithDistance ->
+                    AILocationCard(
+                        locationWithDistance = locationWithDistance,
+                        onClick = { onLocationClick(locationWithDistance.location) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AILocationCard(
+    locationWithDistance: TravelAIViewModel.LocationWithDistance,
+    onClick: () -> Unit
+) {
+    val location = locationWithDistance.location
+    val distance = locationWithDistance.distanceKm
+
+    Surface(
+        modifier = Modifier
+            .width(200.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .clickable { onClick() },
+        color = Color.White,
+        shadowElevation = 4.dp
+    ) {
+        Column {
+            // Image
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .background(Color(0xFFF5F5F5)),
+                contentAlignment = Alignment.Center
+            ) {
+                AsyncImage(
+                    model = location.image,
+                    contentDescription = location.name,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+
+                // Distance badge
+                if (distance != Float.MAX_VALUE) {
+                    Surface(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(6.dp)
+                            .clip(RoundedCornerShape(12.dp)),
+                        color = Color(0xFFE8725E)
+                    ) {
+                        Text(
+                            text = String.format("%.1f km", distance),
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
+                        )
+                    }
+                }
+            }
+
+            // Info
+            Column(modifier = Modifier.padding(10.dp)) {
+                Text(
+                    location.name,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    lineHeight = 15.sp
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        Icons.Default.LocationOn,
+                        contentDescription = "Location",
+                        modifier = Modifier.size(10.dp),
+                        tint = Color.Gray
+                    )
+                    Text(
+                        "${location.city}",
+                        fontSize = 10.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(start = 2.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Rating
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Default.Star,
+                            contentDescription = "Rating",
+                            modifier = Modifier.size(12.dp),
+                            tint = Color(0xFFE8725E)
+                        )
+                        Text(
+                            "${location.rating}",
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black,
+                            modifier = Modifier.padding(start = 2.dp)
+                        )
+                    }
+
+                    // Category chip
+                    Surface(
+                        modifier = Modifier.clip(RoundedCornerShape(6.dp)),
+                        color = Color(0xFFF5F5F5)
+                    ) {
+                        Text(
+                            location.category,
+                            fontSize = 8.sp,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            maxLines = 1
+                        )
+                    }
+                }
+
+                // Price
+                val priceFormatted = String.format(java.util.Locale.getDefault(), "%,d", location.price_start)
+                Text(
+                    "From Rp $priceFormatted",
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFFE8725E),
+                    modifier = Modifier.padding(top = 6.dp)
                 )
             }
         }
@@ -243,15 +432,13 @@ private fun WelcomeCard() {
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                "Ask me anything about travel destinations, tourism recommendations, nearby places, or travel tips.",
+                "I can help you find destinations based on your preferences. Try asking:",
                 fontSize = 12.sp,
                 color = Color.Gray,
                 textAlign = TextAlign.Center,
@@ -260,18 +447,37 @@ private fun WelcomeCard() {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Example questions
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                ExampleQuestionChip("Recommend me tourist attractions near Malang")
-                ExampleQuestionChip("Give me good travel destinations in West Java")
-                ExampleQuestionChip("What are the best beaches in East Java?")
+                ExampleQuestionChip(
+                    icon = Icons.Default.NearMe,
+                    question = "Tempat wisata terdekat dari lokasi saya"
+                )
+                ExampleQuestionChip(
+                    icon = Icons.Default.Star,
+                    question = "Destinasi dengan rating terbaik"
+                )
+                ExampleQuestionChip(
+                    icon = Icons.Default.BeachAccess,
+                    question = "Pantai terbaik di Bali"
+                )
+                ExampleQuestionChip(
+                    icon = Icons.Default.Terrain,
+                    question = "Wisata alam di Jawa Timur"
+                )
+                ExampleQuestionChip(
+                    icon = Icons.Default.Savings,
+                    question = "Tempat wisata murah di Yogyakarta"
+                )
             }
         }
     }
 }
 
 @Composable
-private fun ExampleQuestionChip(question: String) {
+private fun ExampleQuestionChip(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    question: String
+) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -279,16 +485,27 @@ private fun ExampleQuestionChip(question: String) {
         color = Color.White,
         shadowElevation = 1.dp
     ) {
-        Text(
-            text = "• $question",
-            fontSize = 11.sp,
-            color = Color(0xFFE8725E),
+        Row(
             modifier = Modifier.padding(10.dp),
-            fontWeight = FontWeight.Medium,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            lineHeight = 15.sp
-        )
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                icon,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = Color(0xFFE8725E)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = question,
+                fontSize = 11.sp,
+                color = Color(0xFFE8725E),
+                fontWeight = FontWeight.Medium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                lineHeight = 15.sp
+            )
+        }
     }
 }
 
@@ -334,8 +551,9 @@ private fun AskAIInputField(
                 .clip(RoundedCornerShape(24.dp)),
             placeholder = {
                 Text(
-                    "Ask about travel destinations...",
+                    "Cari tempat wisata...",
                     fontSize = 13.sp,
+                    color = Color.Gray,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -345,7 +563,10 @@ private fun AskAIInputField(
                 focusedContainerColor = Color(0xFFF5F5F5),
                 unfocusedContainerColor = Color(0xFFF5F5F5),
                 focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                cursorColor = Color(0xFFE8725E)
             ),
             enabled = !isLoading,
             singleLine = false,

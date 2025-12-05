@@ -31,7 +31,8 @@ fun HomeScreen(
     onLocationClick: (Location) -> Unit,
     onSearchClick: () -> Unit,
     onCategoryClick: (String) -> Unit,
-    onMenuClick: () -> Unit
+    onMenuClick: () -> Unit,
+    userProfileImage: String = ""
 ) {
     var selectedCategory by remember { mutableStateOf("All") }
 
@@ -84,12 +85,25 @@ fun HomeScreen(
                         .clickable { onMenuClick() },
                     color = Color.LightGray
                 ) {
-                    Icon(
-                        Icons.Default.AccountCircle,
-                        contentDescription = "Profile",
-                        modifier = Modifier.padding(8.dp),
-                        tint = Color.Gray
-                    )
+                    if (userProfileImage.isNotEmpty()) {
+                        AsyncImage(
+                            model = userProfileImage,
+                            contentDescription = "Profile",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(50)),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Icon(
+                            Icons.Default.AccountCircle,
+                            contentDescription = "Profile",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(8.dp),
+                            tint = Color.Gray
+                        )
+                    }
                 }
             }
         }

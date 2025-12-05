@@ -98,7 +98,10 @@ fun NavGraph(
         composable(Screen.Home.route) {
             val firestore = FirebaseFirestore.getInstance()
             val storage = FirebaseStorage.getInstance()
+            val auth = FirebaseAuth.getInstance()
             val repository = LocationRepository(firestore, storage)
+            val userRepository = com.example.quickescape.data.repository.UserRepository(firestore, storage, auth)
+
             val viewModel: LocationViewModel = viewModel(
                 factory = object : androidx.lifecycle.ViewModelProvider.Factory {
                     override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
@@ -107,14 +110,24 @@ fun NavGraph(
                 }
             )
 
+            val userViewModel: com.example.quickescape.data.viewmodel.UserViewModel = viewModel(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        return com.example.quickescape.data.viewmodel.UserViewModel(userRepository) as T
+                    }
+                }
+            )
+
             val locations by viewModel.locations.collectAsState()
             val isLoading by viewModel.isLoading.collectAsState()
+            val userProfile by userViewModel.userProfile.collectAsState()
             val coroutineScope = rememberCoroutineScope()
 
             LaunchedEffect(Unit) {
                 coroutineScope.launch {
                     FirebaseInitializer.initializeLocations(firestore)
                     viewModel.loadLocations()
+                    userViewModel.loadUserProfile()
                 }
             }
 
@@ -135,8 +148,9 @@ fun NavGraph(
                     }
                 },
                 onMenuClick = {
-                    // TODO: Handle menu click
-                }
+                    navController.navigate(Screen.Profile.route)
+                },
+                userProfileImage = userProfile?.profileImage ?: ""
             )
         }
 
@@ -666,7 +680,50 @@ fun NavGraph(
         }
 
         composable(Screen.AskAI.route) {
-            com.example.quickescape.ui.home.AskAIScreen()
+            val firestore = FirebaseFirestore.getInstance()
+            val storage = FirebaseStorage.getInstance()
+            val repository = LocationRepository(firestore, storage)
+            val context = androidx.compose.ui.platform.LocalContext.current
+
+            val locationViewModel: LocationViewModel = viewModel(
+                factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+                    override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+                        return LocationViewModel(repository) as T
+                    }
+                }
+            )
+
+            val travelAIViewModel: com.example.quickescape.data.viewmodel.TravelAIViewModel = viewModel()
+
+            val locations by locationViewModel.locations.collectAsState()
+
+            var userLat by remember { mutableStateOf(0.0) }
+            var userLon by remember { mutableStateOf(0.0) }
+
+            LaunchedEffect(Unit) {
+                locationViewModel.loadLocations()
+
+                val locationManager = com.example.quickescape.data.helper.LocationManager(context)
+                val lastLocation = locationManager.getLastKnownLocation()
+                if (lastLocation != null) {
+                    userLat = lastLocation.latitude
+                    userLon = lastLocation.longitude
+                    travelAIViewModel.setUserLocation(userLat, userLon)
+                }
+            }
+
+            LaunchedEffect(locations) {
+                if (locations.isNotEmpty()) {
+                    travelAIViewModel.setLocations(locations)
+                }
+            }
+
+            com.example.quickescape.ui.home.AskAIScreen(
+                viewModel = travelAIViewModel,
+                onLocationClick = { location ->
+                    navController.navigate(Screen.DetailLocation.createRoute(location.id))
+                }
+            )
         }
     }
 }
