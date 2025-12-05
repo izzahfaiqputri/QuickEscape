@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -67,6 +68,8 @@ fun ProfileScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .statusBarsPadding(),
+        contentPadding = PaddingValues(bottom = 80.dp)
     ) {
         // Profile Header
         item {
@@ -74,13 +77,13 @@ fun ProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color(0xFFE8725E))
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp, vertical = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Profile Picture
                 Box(
                     modifier = Modifier
-                        .size(100.dp)
+                        .size(90.dp)
                         .clip(RoundedCornerShape(50))
                         .background(Color.White)
                         .clickable { imagePickerLauncher.launch("image/*") },
@@ -99,7 +102,7 @@ fun ProfileScreen(
                         Icon(
                             Icons.Default.AccountCircle,
                             contentDescription = "Profile",
-                            modifier = Modifier.size(60.dp),
+                            modifier = Modifier.size(50.dp),
                             tint = Color.Gray
                         )
                     }
@@ -108,7 +111,7 @@ fun ProfileScreen(
                     Surface(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
-                            .size(28.dp)
+                            .size(26.dp)
                             .clip(RoundedCornerShape(50)),
                         color = Color(0xFFE8725E),
                         shadowElevation = 4.dp
@@ -116,7 +119,7 @@ fun ProfileScreen(
                         if (imageUploading || isLoading) {
                             CircularProgressIndicator(
                                 modifier = Modifier
-                                    .padding(6.dp)
+                                    .padding(5.dp)
                                     .size(16.dp),
                                 color = Color.White,
                                 strokeWidth = 2.dp
@@ -126,7 +129,7 @@ fun ProfileScreen(
                                 Icons.Default.Edit,
                                 contentDescription = "Edit Photo",
                                 modifier = Modifier
-                                    .padding(6.dp)
+                                    .padding(5.dp)
                                     .clickable { imagePickerLauncher.launch("image/*") },
                                 tint = Color.White
                             )
@@ -143,33 +146,43 @@ fun ProfileScreen(
                         onValueChange = { editedName = it },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = 24.dp),
                         shape = RoundedCornerShape(8.dp),
-                        textStyle = androidx.compose.material3.LocalTextStyle.current.copy(color = Color.White),
+                        textStyle = LocalTextStyle.current.copy(
+                            color = Color.White,
+                            fontSize = 16.sp
+                        ),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = Color.White,
                             unfocusedBorderColor = Color.White,
                             focusedTextColor = Color.White,
                             unfocusedTextColor = Color.White,
                             cursorColor = Color.White
-                        )
+                        ),
+                        singleLine = true
                     )
                 } else {
                     Text(
                         editedName.ifEmpty { currentUser?.displayName ?: "User Name" },
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(6.dp))
 
                 // Email - dari Firebase User (read-only)
                 Text(
                     currentUser?.email ?: "user@example.com",
-                    fontSize = 13.sp,
-                    color = Color.White.copy(alpha = 0.9f)
+                    fontSize = 12.sp,
+                    color = Color.White.copy(alpha = 0.9f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -184,7 +197,7 @@ fun ProfileScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(40.dp)
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = 24.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                         shape = RoundedCornerShape(8.dp),
                         enabled = !isLoading
@@ -196,7 +209,12 @@ fun ProfileScreen(
                                 strokeWidth = 2.dp
                             )
                         } else {
-                            Text("Save Changes", color = Color(0xFFE8725E), fontWeight = FontWeight.Bold)
+                            Text(
+                                "Save Changes",
+                                color = Color(0xFFE8725E),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 13.sp
+                            )
                         }
                     }
                 } else {
@@ -207,19 +225,23 @@ fun ProfileScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(40.dp)
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = 24.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.White.copy(alpha = 0.2f)),
                         shape = RoundedCornerShape(8.dp)
                     ) {
                         Icon(
                             Icons.Default.Edit,
                             contentDescription = "Edit",
-                            modifier = Modifier
-                                .size(18.dp)
-                                .padding(end = 8.dp),
+                            modifier = Modifier.size(16.dp),
                             tint = Color.White
                         )
-                        Text("Edit Name", color = Color.White, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            "Edit Name",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 13.sp
+                        )
                     }
                 }
             }
@@ -234,9 +256,11 @@ fun ProfileScreen(
             ) {
                 Text(
                     "Saved Destinations",
-                    fontSize = 18.sp,
+                    fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = Color.Black,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     "${savedLocations.size} destination${if (savedLocations.size != 1) "s" else ""}",
@@ -283,10 +307,6 @@ fun ProfileScreen(
                 )
             }
         }
-
-        item {
-            Spacer(modifier = Modifier.height(80.dp))
-        }
     }
 }
 
@@ -299,7 +319,7 @@ fun SavedLocationCard(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 6.dp)
             .clip(RoundedCornerShape(12.dp))
             .clickable { onClick() },
         color = Color.White,
@@ -308,71 +328,70 @@ fun SavedLocationCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Image and Info
-            Row(
-                modifier = Modifier.weight(1f),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Image
-                AsyncImage(
-                    model = location.image,
-                    contentDescription = location.name,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
-                )
+            // Image
+            AsyncImage(
+                model = location.image,
+                contentDescription = location.name,
+                modifier = Modifier
+                    .size(70.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop
+            )
 
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 12.dp)
+            // Info
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 10.dp)
+            ) {
+                Text(
+                    location.name,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    lineHeight = 17.sp
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 4.dp)
                 ) {
-                    Text(
-                        location.name,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                    Icon(
+                        Icons.Default.LocationOn,
+                        contentDescription = "Location",
+                        modifier = Modifier.size(11.dp),
+                        tint = Color.Gray
                     )
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(top = 4.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.LocationOn,
-                            contentDescription = "Location",
-                            modifier = Modifier.size(12.dp),
-                            tint = Color.Gray
-                        )
-                        Text(
-                            "${location.city}, ${location.island}",
-                            fontSize = 11.sp,
-                            color = Color.Gray,
-                            modifier = Modifier.padding(start = 2.dp)
-                        )
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(top = 4.dp)
-                    ) {
-                        Icon(
-                            Icons.Default.Star,
-                            contentDescription = "Rating",
-                            modifier = Modifier.size(12.dp),
-                            tint = Color(0xFFE8725E)
-                        )
-                        Text(
-                            String.format("%.1f", location.rating),
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.Black,
-                            modifier = Modifier.padding(start = 2.dp)
-                        )
-                    }
+                    Text(
+                        "${location.city}, ${location.island}",
+                        fontSize = 10.sp,
+                        color = Color.Gray,
+                        modifier = Modifier.padding(start = 2.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 4.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Star,
+                        contentDescription = "Rating",
+                        modifier = Modifier.size(11.dp),
+                        tint = Color(0xFFE8725E)
+                    )
+                    Text(
+                        String.format("%.1f", location.rating),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
+                        modifier = Modifier.padding(start = 2.dp)
+                    )
                 }
             }
 
@@ -385,7 +404,7 @@ fun SavedLocationCard(
                     Icons.Default.Close,
                     contentDescription = "Remove",
                     tint = Color(0xFFE8725E),
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(18.dp)
                 )
             }
         }

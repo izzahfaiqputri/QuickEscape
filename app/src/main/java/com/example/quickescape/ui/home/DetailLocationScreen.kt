@@ -18,6 +18,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -47,12 +49,14 @@ fun DetailLocationScreen(
 ) {
     var saved by remember { mutableStateOf(isSaved) }
     var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("Reviews", "Photos", "Food", "Go to Location")
+    val tabs = listOf("Reviews", "Photos", "Food", "Location")
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .statusBarsPadding(),
+        contentPadding = PaddingValues(bottom = 32.dp)
     ) {
         item {
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -61,7 +65,7 @@ fun DetailLocationScreen(
                     contentDescription = location.name,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp),
+                        .aspectRatio(4f / 3f),
                     contentScale = ContentScale.Crop
                 )
 
@@ -69,7 +73,7 @@ fun DetailLocationScreen(
                     modifier = Modifier
                         .align(Alignment.TopStart)
                         .padding(12.dp)
-                        .size(40.dp)
+                        .size(38.dp)
                         .clip(RoundedCornerShape(50))
                         .clickable { onBackClick() },
                     color = Color.White,
@@ -89,7 +93,7 @@ fun DetailLocationScreen(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(12.dp)
-                        .size(40.dp)
+                        .size(38.dp)
                         .clip(RoundedCornerShape(50))
                         .clickable {
                             saved = !saved
@@ -102,7 +106,7 @@ fun DetailLocationScreen(
                         if (saved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
                         contentDescription = if (saved) "Unsave" else "Save",
                         modifier = Modifier.padding(8.dp),
-                        tint = if (saved) Color(0xFFE8725E) else Color(0xFFE8725E)
+                        tint = Color(0xFFE8725E)
                     )
                 }
             }
@@ -112,75 +116,87 @@ fun DetailLocationScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
                 Text(
                     location.name,
-                    fontSize = 24.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = Color.Black,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    lineHeight = 26.sp
                 )
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp),
+                        .padding(top = 6.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         Icons.Default.LocationOn,
                         contentDescription = "Location",
-                        modifier = Modifier.size(18.dp),
+                        modifier = Modifier.size(16.dp),
                         tint = Color(0xFFE8725E)
                     )
                     Text(
                         "${location.city}, ${location.island}",
-                        fontSize = 14.sp,
+                        fontSize = 13.sp,
                         color = Color.Gray,
-                        modifier = Modifier.padding(start = 8.dp)
+                        modifier = Modifier
+                            .padding(start = 6.dp)
+                            .weight(1f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 12.dp),
+                        .padding(top = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        RatingStars(rating = location.rating, size = 20.dp)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        RatingStars(rating = location.rating, size = 18.dp)
                         Text(
                             String.format("%.1f", location.rating),
-                            fontSize = 16.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.Black,
-                            modifier = Modifier.padding(start = 8.dp)
+                            modifier = Modifier.padding(start = 6.dp)
                         )
                         Text(
                             "(${location.ratingCount} reviews)",
-                            fontSize = 12.sp,
+                            fontSize = 11.sp,
                             color = Color.Gray,
-                            modifier = Modifier.padding(start = 4.dp)
+                            modifier = Modifier.padding(start = 4.dp),
+                            maxLines = 1
                         )
                     }
 
                     Text(
                         "Rp ${String.format("%,d", location.price_start)}",
-                        fontSize = 16.sp,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color(0xFFE8725E)
+                        color = Color(0xFFE8725E),
+                        maxLines = 1
                     )
                 }
 
                 Surface(
                     modifier = Modifier
-                        .padding(top = 12.dp)
+                        .padding(top = 10.dp)
                         .clip(RoundedCornerShape(20.dp)),
                     color = Color(0xFFF0F0F0)
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -196,15 +212,16 @@ fun DetailLocationScreen(
                                 else -> Icons.Default.Place
                             },
                             contentDescription = location.category,
-                            modifier = Modifier.size(16.dp),
+                            modifier = Modifier.size(14.dp),
                             tint = Color(0xFFE8725E)
                         )
                         Text(
                             location.category,
-                            fontSize = 12.sp,
+                            fontSize = 11.sp,
                             fontWeight = FontWeight.Medium,
                             color = Color.Black,
-                            modifier = Modifier.padding(start = 6.dp)
+                            modifier = Modifier.padding(start = 5.dp),
+                            maxLines = 1
                         )
                     }
                 }
@@ -228,7 +245,8 @@ fun DetailLocationScreen(
                             Text(
                                 title,
                                 fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Normal,
-                                fontSize = 14.sp
+                                fontSize = 13.sp,
+                                maxLines = 1
                             )
                         }
                     )
@@ -247,15 +265,16 @@ fun DetailLocationScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 16.dp),
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
                             "Reviews (${reviews.size})",
-                            fontSize = 18.sp,
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Black
+                            color = Color.Black,
+                            maxLines = 1
                         )
 
                         Button(
@@ -263,17 +282,17 @@ fun DetailLocationScreen(
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color(0xFFE8725E)
                             ),
-                            modifier = Modifier.height(36.dp),
-                            shape = RoundedCornerShape(20.dp)
+                            modifier = Modifier.height(34.dp),
+                            shape = RoundedCornerShape(20.dp),
+                            contentPadding = PaddingValues(horizontal = 12.dp)
                         ) {
                             Icon(
                                 Icons.Default.Add,
                                 contentDescription = "Add Review",
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .padding(end = 4.dp)
+                                modifier = Modifier.size(14.dp)
                             )
-                            Text("Add Review", fontSize = 12.sp)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Add Review", fontSize = 11.sp)
                         }
                     }
                 }
@@ -286,7 +305,7 @@ fun DetailLocationScreen(
                                 .padding(32.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator()
+                            CircularProgressIndicator(color = Color(0xFFE8725E))
                         }
                     }
                 }
@@ -302,7 +321,8 @@ fun DetailLocationScreen(
                             Text(
                                 "No reviews yet. Be the first to review!",
                                 color = Color.Gray,
-                                fontSize = 14.sp
+                                fontSize = 13.sp,
+                                textAlign = TextAlign.Center
                             )
                         }
                     }
@@ -331,9 +351,10 @@ fun DetailLocationScreen(
                         ) {
                             Text(
                                 "Photos (${photos.size})",
-                                fontSize = 18.sp,
+                                fontSize = 16.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = Color.Black,
+                                maxLines = 1
                             )
 
                             Button(
@@ -342,12 +363,13 @@ fun DetailLocationScreen(
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = Color(0xFFE8725E)
                                 ),
-                                modifier = Modifier.height(36.dp),
-                                shape = RoundedCornerShape(20.dp)
+                                modifier = Modifier.height(34.dp),
+                                shape = RoundedCornerShape(20.dp),
+                                contentPadding = PaddingValues(horizontal = 12.dp)
                             ) {
                                 if (isUploadingPhoto) {
                                     CircularProgressIndicator(
-                                        modifier = Modifier.size(16.dp),
+                                        modifier = Modifier.size(14.dp),
                                         color = Color.White,
                                         strokeWidth = 2.dp
                                     )
@@ -355,10 +377,10 @@ fun DetailLocationScreen(
                                     Icon(
                                         Icons.Default.CameraAlt,
                                         contentDescription = "Add Photo",
-                                        modifier = Modifier.size(16.dp)
+                                        modifier = Modifier.size(14.dp)
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text("Add Photo", fontSize = 12.sp)
+                                    Text("Add Photo", fontSize = 11.sp)
                                 }
                             }
                         }
@@ -385,12 +407,12 @@ fun DetailLocationScreen(
                                     Text(
                                         "No photos yet. Be the first to add!",
                                         color = Color.Gray,
-                                        fontSize = 14.sp
+                                        fontSize = 13.sp,
+                                        textAlign = TextAlign.Center
                                     )
                                 }
                             }
                         } else {
-                            // Display photos in a simple column (no nested LazyColumn)
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
@@ -407,11 +429,10 @@ fun DetailLocationScreen(
                                             contentDescription = "Location photo",
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .height(200.dp),
+                                                .aspectRatio(16f / 10f),
                                             contentScale = ContentScale.Crop
                                         )
 
-                                        // Delete icon
                                         Surface(
                                             modifier = Modifier
                                                 .align(Alignment.TopEnd)
@@ -427,7 +448,9 @@ fun DetailLocationScreen(
                                             Icon(
                                                 Icons.Default.Delete,
                                                 contentDescription = "Delete Photo",
-                                                modifier = Modifier.size(16.dp),
+                                                modifier = Modifier
+                                                    .padding(4.dp)
+                                                    .size(16.dp),
                                                 tint = Color.Red
                                             )
                                         }
@@ -447,9 +470,10 @@ fun DetailLocationScreen(
                     ) {
                         Text(
                             "Food & Beverages",
-                            fontSize = 18.sp,
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Black
+                            color = Color.Black,
+                            maxLines = 1
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -464,11 +488,11 @@ fun DetailLocationScreen(
                                 Text(
                                     "No food available for this location.",
                                     color = Color.Gray,
-                                    fontSize = 14.sp
+                                    fontSize = 13.sp,
+                                    textAlign = TextAlign.Center
                                 )
                             }
                         } else {
-                            // Use forEach instead of items() since we're inside an item {} block
                             foods.forEach { food ->
                                 FoodItem(
                                     food = food,
@@ -492,16 +516,12 @@ fun DetailLocationScreen(
                 }
             }
         }
-
-        item {
-            Spacer(modifier = Modifier.height(32.dp))
-        }
     }
 }
 
 @Composable
 fun RatingStars(rating: Float, size: androidx.compose.ui.unit.Dp = 16.dp) {
-    Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+    Row(horizontalArrangement = Arrangement.spacedBy(1.dp)) {
         repeat(5) { index ->
             Icon(
                 imageVector = Icons.Default.Star,
@@ -521,7 +541,7 @@ fun ReviewCard(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 6.dp)
             .clip(RoundedCornerShape(12.dp)),
         color = Color(0xFFFAFAFA),
         shadowElevation = 1.dp
@@ -538,7 +558,7 @@ fun ReviewCard(
                 ) {
                     Surface(
                         modifier = Modifier
-                            .size(36.dp)
+                            .size(34.dp)
                             .clip(RoundedCornerShape(50)),
                         color = Color.LightGray
                     ) {
@@ -561,16 +581,18 @@ fun ReviewCard(
                         }
                     }
 
-                    Column(modifier = Modifier.padding(start = 12.dp)) {
+                    Column(modifier = Modifier.padding(start = 10.dp)) {
                         Text(
                             review.userName,
-                            fontSize = 14.sp,
+                            fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Black
+                            color = Color.Black,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                         Text(
                             formatTimestamp(review.timestamp),
-                            fontSize = 11.sp,
+                            fontSize = 10.sp,
                             color = Color.Gray
                         )
                     }
@@ -578,12 +600,12 @@ fun ReviewCard(
 
                 IconButton(
                     onClick = onDeleteClick,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(30.dp)
                 ) {
                     Icon(
                         Icons.Default.Delete,
                         contentDescription = "Delete",
-                        modifier = Modifier.size(18.dp),
+                        modifier = Modifier.size(16.dp),
                         tint = Color.Gray
                     )
                 }
@@ -593,10 +615,10 @@ fun ReviewCard(
                 modifier = Modifier.padding(top = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                RatingStars(rating = review.rating, size = 14.dp)
+                RatingStars(rating = review.rating, size = 12.dp)
                 Text(
                     String.format("%.1f", review.rating),
-                    fontSize = 12.sp,
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
                     modifier = Modifier.padding(start = 6.dp)
@@ -606,10 +628,10 @@ fun ReviewCard(
             if (review.comment.isNotEmpty()) {
                 Text(
                     review.comment,
-                    fontSize = 13.sp,
+                    fontSize = 12.sp,
                     color = Color.Black,
                     modifier = Modifier.padding(top = 8.dp),
-                    lineHeight = 18.sp
+                    lineHeight = 17.sp
                 )
             }
 
@@ -618,14 +640,14 @@ fun ReviewCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     items(review.photos) { photoUrl ->
                         AsyncImage(
                             model = photoUrl,
                             contentDescription = "Review photo",
                             modifier = Modifier
-                                .size(80.dp)
+                                .size(70.dp)
                                 .clip(RoundedCornerShape(8.dp)),
                             contentScale = ContentScale.Crop
                         )
@@ -644,69 +666,77 @@ fun FoodItem(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 6.dp)
             .clip(RoundedCornerShape(12.dp)),
         color = Color(0xFFFAFAFA),
         shadowElevation = 1.dp
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(10.dp)
         ) {
-            AsyncImage(
-                model = food.image,
-                contentDescription = food.name,
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
-            )
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column(
-                modifier = Modifier.weight(1f)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.Top
             ) {
-                Text(
-                    text = food.name,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    maxLines = 2,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                AsyncImage(
+                    model = food.image,
+                    contentDescription = food.name,
+                    modifier = Modifier
+                        .size(70.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.width(10.dp))
 
-                Text(
-                    text = "Rp ${String.format("%,d", food.price)}",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFFE8725E)
-                )
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = food.name,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.Black,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        lineHeight = 18.sp
+                    )
 
-                Text(
-                    text = food.description,
-                    fontSize = 12.sp,
-                    color = Color.Gray,
-                    maxLines = 2,
-                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
-                )
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = "Rp ${String.format("%,d", food.price)}",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFE8725E)
+                    )
+
+                    Text(
+                        text = food.description,
+                        fontSize = 11.sp,
+                        color = Color.Gray,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        lineHeight = 15.sp,
+                        modifier = Modifier.padding(top = 2.dp)
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.height(10.dp))
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 var quantity by remember { mutableStateOf(1) }
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     IconButton(
                         onClick = {
@@ -714,57 +744,58 @@ fun FoodItem(
                                 quantity--
                             }
                         },
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(28.dp)
                     ) {
                         Icon(
                             Icons.Default.Remove,
                             contentDescription = "Decrease",
-                            modifier = Modifier.size(16.dp),
+                            modifier = Modifier.size(14.dp),
                             tint = Color.Gray
                         )
                     }
 
                     Text(
                         text = quantity.toString(),
-                        fontSize = 14.sp,
+                        fontSize = 13.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Black,
-                        modifier = Modifier.width(24.dp),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        modifier = Modifier.width(20.dp),
+                        textAlign = TextAlign.Center
                     )
 
                     IconButton(
                         onClick = {
                             quantity++
                         },
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(28.dp)
                     ) {
                         Icon(
                             Icons.Default.Add,
                             contentDescription = "Increase",
-                            modifier = Modifier.size(16.dp),
+                            modifier = Modifier.size(14.dp),
                             tint = Color.Gray
                         )
                     }
                 }
+
+                Spacer(modifier = Modifier.width(12.dp))
 
                 Button(
                     onClick = { onOrderClick(quantity) },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color(0xFFE8725E)
                     ),
-                    modifier = Modifier
-                        .height(36.dp)
-                        .widthIn(min = 80.dp),
-                    shape = RoundedCornerShape(20.dp)
+                    modifier = Modifier.height(32.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp)
                 ) {
                     Icon(
                         Icons.Default.AddShoppingCart,
                         contentDescription = "Order",
-                        modifier = Modifier.size(14.dp)
+                        modifier = Modifier.size(12.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Order", fontSize = 11.sp)
+                    Text("Order", fontSize = 10.sp)
                 }
             }
         }

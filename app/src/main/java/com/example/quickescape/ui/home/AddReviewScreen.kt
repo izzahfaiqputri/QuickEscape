@@ -43,6 +43,7 @@ fun AddReviewScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .statusBarsPadding()
     ) {
         // Scrollable content
         Column(

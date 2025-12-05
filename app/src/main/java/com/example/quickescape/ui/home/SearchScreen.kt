@@ -69,6 +69,7 @@ fun SearchScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .statusBarsPadding()
     ) {
         // Header dengan Search Bar
         Row(

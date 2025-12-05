@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -42,6 +43,7 @@ fun AskAIScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .statusBarsPadding()
     ) {
         // Header
         AskAIHeader(
@@ -59,7 +61,8 @@ fun AskAIScreen(
                 .weight(1f)
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(bottom = 8.dp)
         ) {
             // Show welcome message if no history
             if (conversationHistory.isEmpty()) {
@@ -124,31 +127,35 @@ private fun AskAIHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     Icons.Default.AutoAwesome,
                     contentDescription = "AI",
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier.size(22.dp),
                     tint = Color(0xFFE8725E)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     "Travel AI Assistant",
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = Color.Black,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
             Text(
                 "Ask anything about travel destinations",
-                fontSize = 12.sp,
+                fontSize = 11.sp,
                 color = Color.Gray,
-                modifier = Modifier.padding(start = 32.dp, top = 4.dp)
+                modifier = Modifier.padding(start = 30.dp, top = 2.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
 
@@ -180,7 +187,7 @@ private fun ChatBubble(
     ) {
         Surface(
             modifier = Modifier
-                .widthIn(max = 300.dp)
+                .widthIn(max = 280.dp)
                 .clip(RoundedCornerShape(12.dp)),
             color = if (isUser) Color(0xFFE8725E) else Color(0xFFF0F0F0),
             shadowElevation = 1.dp
@@ -188,7 +195,7 @@ private fun ChatBubble(
             Column(modifier = Modifier.padding(12.dp)) {
                 Text(
                     text = message.text,
-                    fontSize = 14.sp,
+                    fontSize = 13.sp,
                     color = if (isUser) Color.White else Color.Black,
                     lineHeight = 18.sp
                 )
@@ -197,7 +204,7 @@ private fun ChatBubble(
 
                 Text(
                     text = formatTime(message.timestamp),
-                    fontSize = 10.sp,
+                    fontSize = 9.sp,
                     color = if (isUser) Color.White.copy(alpha = 0.7f) else Color.Gray,
                     textAlign = TextAlign.End,
                     modifier = Modifier.align(Alignment.End)
@@ -225,7 +232,7 @@ private fun WelcomeCard() {
             Icon(
                 Icons.Default.AutoAwesome,
                 contentDescription = "Welcome",
-                modifier = Modifier.size(48.dp),
+                modifier = Modifier.size(40.dp),
                 tint = Color(0xFFE8725E)
             )
 
@@ -233,20 +240,22 @@ private fun WelcomeCard() {
 
             Text(
                 "Welcome to Travel AI Assistant!",
-                fontSize = 16.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 "Ask me anything about travel destinations, tourism recommendations, nearby places, or travel tips.",
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 color = Color.Gray,
                 textAlign = TextAlign.Center,
-                lineHeight = 18.sp
+                lineHeight = 17.sp
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -272,10 +281,13 @@ private fun ExampleQuestionChip(question: String) {
     ) {
         Text(
             text = "• $question",
-            fontSize = 12.sp,
+            fontSize = 11.sp,
             color = Color(0xFFE8725E),
-            modifier = Modifier.padding(12.dp),
-            fontWeight = FontWeight.Medium
+            modifier = Modifier.padding(10.dp),
+            fontWeight = FontWeight.Medium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            lineHeight = 15.sp
         )
     }
 }
@@ -309,7 +321,7 @@ private fun AskAIInputField(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -318,10 +330,15 @@ private fun AskAIInputField(
             onValueChange = onInputChange,
             modifier = Modifier
                 .weight(1f)
-                .heightIn(min = 48.dp)
+                .heightIn(min = 48.dp, max = 120.dp)
                 .clip(RoundedCornerShape(24.dp)),
             placeholder = {
-                Text("Ask about travel destinations...", fontSize = 13.sp)
+                Text(
+                    "Ask about travel destinations...",
+                    fontSize = 13.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             },
             shape = RoundedCornerShape(24.dp),
             colors = TextFieldDefaults.colors(
@@ -337,8 +354,8 @@ private fun AskAIInputField(
 
         Surface(
             modifier = Modifier
-                .size(48.dp)
-                .clip(RoundedCornerShape(24.dp)),
+                .size(46.dp)
+                .clip(RoundedCornerShape(23.dp)),
             color = Color(0xFFE8725E),
             shadowElevation = 2.dp
         ) {
@@ -349,7 +366,7 @@ private fun AskAIInputField(
             ) {
                 if (isLoading) {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
+                        modifier = Modifier.size(20.dp),
                         color = Color.White,
                         strokeWidth = 2.dp
                     )
@@ -358,7 +375,7 @@ private fun AskAIInputField(
                         Icons.AutoMirrored.Filled.Send,
                         contentDescription = "Send",
                         tint = Color.White,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(18.dp)
                     )
                 }
             }

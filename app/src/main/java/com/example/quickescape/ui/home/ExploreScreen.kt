@@ -16,6 +16,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -33,6 +35,7 @@ fun ExploreScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White)
+            .statusBarsPadding()
     ) {
         // Header
         Column(
@@ -43,15 +46,19 @@ fun ExploreScreen(
         ) {
             Text(
                 "Nearby Adventures",
-                fontSize = 24.sp,
+                fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = Color.Black,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 "Discover destinations near you",
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 color = Color.Gray,
-                modifier = Modifier.padding(top = 4.dp)
+                modifier = Modifier.padding(top = 4.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             // Location Info
@@ -76,15 +83,19 @@ fun ExploreScreen(
                         Icon(
                             Icons.Default.LocationOn,
                             contentDescription = "Your Location",
-                            modifier = Modifier.size(20.dp),
+                            modifier = Modifier.size(18.dp),
                             tint = Color(0xFFE8725E)
                         )
                         Text(
                             userLocation,
-                            fontSize = 13.sp,
+                            fontSize = 12.sp,
                             color = Color.Black,
-                            modifier = Modifier.padding(start = 8.dp),
-                            fontWeight = FontWeight.Medium
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .weight(1f),
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                     Icon(
@@ -119,7 +130,8 @@ fun ExploreScreen(
                         "Finding nearby destinations...",
                         fontSize = 14.sp,
                         color = Color.Gray,
-                        modifier = Modifier.padding(top = 16.dp)
+                        modifier = Modifier.padding(top = 16.dp),
+                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -143,14 +155,16 @@ fun ExploreScreen(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.Gray,
-                        modifier = Modifier.padding(top = 16.dp)
+                        modifier = Modifier.padding(top = 16.dp),
+                        textAlign = TextAlign.Center
                     )
                     Text(
                         "Try enabling location services or expanding the search radius",
                         fontSize = 12.sp,
                         color = Color.Gray,
-                        modifier = Modifier.padding(top = 8.dp),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
+                        textAlign = TextAlign.Center,
+                        lineHeight = 18.sp
                     )
                     Button(
                         onClick = onRetryClick,
@@ -170,7 +184,10 @@ fun ExploreScreen(
                 }
             }
         } else {
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 80.dp)
+            ) {
                 items(nearbyLocations) { (location, distance) ->
                     NearbyLocationCard(
                         location = location,
@@ -192,7 +209,7 @@ fun NearbyLocationCard(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(12.dp))
             .clickable { onClick() },
         color = Color.White,
@@ -203,7 +220,7 @@ fun NearbyLocationCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .aspectRatio(16f / 10f)
                     .background(Color(0xFFF5F5F5)),
                 contentAlignment = Alignment.Center
             ) {
@@ -252,14 +269,17 @@ fun NearbyLocationCard(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             location.name,
-                            fontSize = 16.sp,
+                            fontSize = 15.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Black
+                            color = Color.Black,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                            lineHeight = 20.sp
                         )
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -268,28 +288,28 @@ fun NearbyLocationCard(
                             Icon(
                                 Icons.Default.LocationOn,
                                 contentDescription = "Location",
-                                modifier = Modifier.size(14.dp),
+                                modifier = Modifier.size(12.dp),
                                 tint = Color.Gray
                             )
                             Text(
                                 "${location.city}, ${location.island}",
-                                fontSize = 12.sp,
+                                fontSize = 11.sp,
                                 color = Color.Gray,
-                                modifier = Modifier.padding(start = 4.dp)
+                                modifier = Modifier.padding(start = 4.dp),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
 
                     // Distance Badge
                     Surface(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(Color(0xFFFFF3E0)),
+                        modifier = Modifier.clip(RoundedCornerShape(20.dp)),
                         color = Color(0xFFFFF3E0)
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(8.dp, 4.dp)
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                         ) {
                             Icon(
                                 Icons.Default.Navigation,
@@ -299,10 +319,11 @@ fun NearbyLocationCard(
                             )
                             Text(
                                 String.format(java.util.Locale.getDefault(), "%.1f km", distance),
-                                fontSize = 11.sp,
+                                fontSize = 10.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color(0xFFE8725E),
-                                modifier = Modifier.padding(start = 4.dp)
+                                modifier = Modifier.padding(start = 4.dp),
+                                maxLines = 1
                             )
                         }
                     }
@@ -316,11 +337,14 @@ fun NearbyLocationCard(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.weight(1f)
+                    ) {
                         Icon(
                             Icons.Default.Star,
                             contentDescription = "Rating",
-                            modifier = Modifier.size(16.dp),
+                            modifier = Modifier.size(14.dp),
                             tint = Color(0xFFE8725E)
                         )
                         Text(
@@ -332,7 +356,7 @@ fun NearbyLocationCard(
                         )
                         Text(
                             "(${location.ratingCount})",
-                            fontSize = 11.sp,
+                            fontSize = 10.sp,
                             color = Color.Gray,
                             modifier = Modifier.padding(start = 2.dp)
                         )
@@ -344,10 +368,11 @@ fun NearbyLocationCard(
                     ) {
                         Text(
                             location.category,
-                            fontSize = 11.sp,
+                            fontSize = 10.sp,
                             color = Color.Gray,
-                            modifier = Modifier.padding(6.dp, 4.dp),
-                            fontWeight = FontWeight.Medium
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            fontWeight = FontWeight.Medium,
+                            maxLines = 1
                         )
                     }
                 }
@@ -356,10 +381,11 @@ fun NearbyLocationCard(
                 val priceFormatted = String.format(java.util.Locale.getDefault(), "%,d", location.price_start)
                 Text(
                     "From Rp $priceFormatted",
-                    fontSize = 14.sp,
+                    fontSize = 13.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFFE8725E),
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 8.dp),
+                    maxLines = 1
                 )
             }
         }
