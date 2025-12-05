@@ -182,12 +182,15 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-
-        // Handle deep link when app is already running
         val data = intent.data
         if (data != null && data.scheme == "quickescape" && data.host == "payment") {
             Log.d(TAG, "New intent received with payment callback")
-            recreate() // Recreate activity to trigger deep link handling
+
+            val orderId = data.getQueryParameter("orderId")
+            val status = data.getQueryParameter("status")
+
+            Log.d(TAG, "Payment callback - Order ID: $orderId, Status: $status")
+
         }
     }
 

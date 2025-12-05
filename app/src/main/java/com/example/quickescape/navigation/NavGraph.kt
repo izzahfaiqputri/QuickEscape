@@ -551,12 +551,14 @@ fun NavGraph(
             // Navigate to payment when order is created successfully
             LaunchedEffect(currentOrder) {
                 currentOrder?.let { order ->
-                    if (order.status == "pending" && order.paymentUrl.isNotEmpty()) {
-                        android.widget.Toast.makeText(
-                            context,
-                            "Redirecting to payment...",
-                            android.widget.Toast.LENGTH_SHORT
-                        ).show()
+                    if (order.status == "awaiting_payment" && order.paymentUrl.isNotEmpty()) {
+                        navController.navigate(
+                            Screen.PaymentWebView.createRoute(order.orderId, order.paymentUrl)
+                        ) {
+                            popUpTo(Screen.DetailLocation.route) {
+                                inclusive = false
+                            }
+                        }
                     }
                 }
             }
@@ -575,6 +577,67 @@ fun NavGraph(
                 // Handle food not found
                 LaunchedEffect(Unit) {
                     android.widget.Toast.makeText(context, "Food not found", android.widget.Toast.LENGTH_SHORT).show()
+                    navController.popBackStack()
+                }
+            }
+        }
+
+        composable(
+            Screen.PaymentWebView.route,
+            arguments = listOf(
+                navArgument("orderId") { type = NavType.StringType },
+                navArgument("paymentUrl") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val orderId = backStackEntry.arguments?.getString("orderId") ?: ""
+            val encodedPaymentUrl = backStackEntry.arguments?.getString("paymentUrl") ?: ""
+            val context = androidx.compose.ui.platform.LocalContext.current
+
+            val paymentUrl = try {
+                java.net.URLDecoder.decode(encodedPaymentUrl, "UTF-8")
+            } catch (e: Exception) {
+                Log.e("NavGraph", "Error decoding payment URL: ${e.message}")
+                ""
+            }
+
+            if (paymentUrl.isNotEmpty()) {
+                com.example.quickescape.ui.payment.PaymentWebViewScreen(
+                    paymentUrl = paymentUrl,
+                    orderId = orderId,
+                    onPaymentSuccess = {
+                        // kalo payment berhasil, navigate ke Invoice
+                        android.widget.Toast.makeText(
+                            context,
+                            "Payment successful!",
+                            android.widget.Toast.LENGTH_SHORT
+                        ).show()
+
+                        navController.navigate(Screen.Invoice.createRoute(orderId)) {
+                            popUpTo(Screen.Home.route) {
+                                inclusive = false
+                            }
+                        }
+                    },
+                    onPaymentFailed = {
+                        android.widget.Toast.makeText(
+                            context,
+                            "Payment failed or cancelled",
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
+
+                        navController.popBackStack(Screen.DetailLocation.route, false)
+                    },
+                    onBackClick = {
+                        navController.popBackStack()
+                    }
+                )
+            } else {
+                LaunchedEffect(Unit) {
+                    android.widget.Toast.makeText(
+                        context,
+                        "Payment URL not found",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
                     navController.popBackStack()
                 }
             }

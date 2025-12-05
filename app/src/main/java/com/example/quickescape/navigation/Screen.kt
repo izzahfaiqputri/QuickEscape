@@ -22,6 +22,12 @@ sealed class Screen(val route: String) {
     object OrderForm : Screen("order_form/{locationId}/{foodId}") {
         fun createRoute(locationId: String, foodId: String) = "order_form/$locationId/$foodId"
     }
+    object PaymentWebView : Screen("payment_webview/{orderId}/{paymentUrl}") {
+        fun createRoute(orderId: String, paymentUrl: String): String {
+            val encodedUrl = java.net.URLEncoder.encode(paymentUrl, "UTF-8")
+            return "payment_webview/$orderId/$encodedUrl"
+        }
+    }
     object Invoice : Screen("invoice/{orderId}") {
         fun createRoute(orderId: String) = "invoice/$orderId"
     }

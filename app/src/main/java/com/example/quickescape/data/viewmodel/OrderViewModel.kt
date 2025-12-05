@@ -70,18 +70,18 @@ class OrderViewModel(
                 val paymentResponse = foodRepository.createPayment(food, quantity)
 
                 if (paymentResponse != null) {
-                    Log.d("OrderViewModel", "✅ Payment response received")
+                    Log.d("OrderViewModel", "Payment response received")
                     Log.d("OrderViewModel", "Invoice URL: ${paymentResponse.invoiceUrl}")
 
-                    // Update order with payment URL
                     _currentOrder.value = orderInfo.copy(
-                        paymentUrl = paymentResponse.invoiceUrl
+                        paymentUrl = paymentResponse.invoiceUrl,
+                        status = "awaiting_payment"
                     )
 
-                    // Open payment URL
-                    foodRepository.openPaymentUrl(paymentResponse.invoiceUrl)
+
+                    Log.d("OrderViewModel", "Payment URL saved, ready for WebView")
                 } else {
-                    Log.e("OrderViewModel", "❌ Payment API failed, using fallback method")
+                    Log.e("OrderViewModel", "Payment API failed, using fallback method")
 
                     // FALLBACK: Create mock invoice for testing when API is down
                     val currentDate = SimpleDateFormat("MMM d, yyyy, h:mm a", Locale.getDefault()).format(Date())
